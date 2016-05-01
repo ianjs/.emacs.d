@@ -57,7 +57,7 @@
     smex
 
     ;; project navigation
-    projectile
+;;    projectile
 
     ;; colorful parenthesis matching
     rainbow-delimiters
