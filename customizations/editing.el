@@ -71,5 +71,3 @@
 
 (setq electric-indent-mode nil)
 
-;; Set remote user to root by default
-(setq tramp-default-user "root")

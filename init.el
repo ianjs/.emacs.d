@@ -136,3 +136,14 @@
 ;; Langauage-specific
 (load "setup-clojure.el")
 (load "setup-js.el")
+
+;;;;;;;;; IJS Specific ;;;;;;;;;;;;;;
+
+;; Add lispy mode to all lisp modes
+(add-hook 'emacs-lisp-mode-hook (lambda () (lispy-mode 1)))
+
+;; Set remote user to root by default
+(setq tramp-default-user "root")
+
+;; Highlight whole expression on paren match, not just other bracket
+(setq show-paren-style 'expression)
