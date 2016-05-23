@@ -36,7 +36,7 @@
 ;; manually with M-x package-install
 ;; Add in your own as you wish:
 (defvar my-packages
-  '(;; makes handling lisp expressions much, much easier
+  '( ;; makes handling lisp expressions much, much easier
     ;; Cheatsheet: http://www.emacswiki.org/emacs/PareditCheatsheet
     paredit
 
@@ -62,7 +62,7 @@
     smex
 
     ;; project navigation
-;;    projectile
+    projectile
 
     ;; colorful parenthesis matching
     rainbow-delimiters
@@ -71,7 +71,10 @@
     tagedit
 
     ;; git integration
-    magit))
+    magit
+
+    aggressive-indent
+    ))
 
 ;; On OS X, an Emacs instance started from the graphical user
 ;; interface will have a different environment than a shell in a
@@ -139,11 +142,14 @@
 
 ;;;;;;;;; IJS Specific ;;;;;;;;;;;;;;
 
-;; Add lispy mode to all lisp modes
-(add-hook 'emacs-lisp-mode-hook (lambda () (lispy-mode 1)))
-
 ;; Set remote user to root by default
 (setq tramp-default-user "root")
 
 ;; Highlight whole expression on paren match, not just other bracket
 (setq show-paren-style 'expression)
+
+(setq cider-repl-use-pretty-printing t)
+
+(global-aggressive-indent-mode 1)
+
+(set-face-attribute 'default nil :family "Source Code Pro" :weight 'Light  :height 160)
