@@ -150,6 +150,11 @@
 
 (setq cider-repl-use-pretty-printing t)
 
+;; try to keep indenting nice at all times
 (global-aggressive-indent-mode 1)
 
+;; Nicer font on OSX
 (set-face-attribute 'default nil :family "Source Code Pro" :weight 'Light  :height 160)
+
+;; completion help - not sure if this is a good idea
+(which-key-mode)
