@@ -1,20 +1,25 @@
 ;;;;
 ;; Packages
 ;;;;
+;; Added by Package.el.  This must come before configurations of
+;; installed packages.  Don't delete this line.  If you don't want it,
+;; just comment it out by adding a semicolon to the start of the line.
+;; You may delete these explanatory comments.
+(package-initialize)
 
 ;; Define package repositories
 (require 'package)
-(add-to-list 'package-archives
-             '("marmalade" . "http://marmalade-repo.org/packages/") t)
-(add-to-list 'package-archives
-             '("tromey" . "http://tromey.com/elpa/") t)
-(add-to-list 'package-archives
-             '("melpa" . "http://melpa.milkbox.net/packages/") t)
+;; (add-to-list 'package-archives
+;;              '("marmalade" . "http://marmalade-repo.org/packages/") t)
+;; (add-to-list 'package-archives
+;;              '("tromey" . "http://tromey.com/elpa/") t)
+;; (add-to-list 'package-archives
+;;              '("melpa" . "http://melpa.milkbox.net/packages/") t)
 
-(add-to-list 'package-archives
-            '("melpa-stable" . "http://stable.melpa.org/packages/") t)
+ (add-to-list 'package-archives
+             '("melpa-stable" . "http://stable.melpa.org/packages/") t)
 
-(add-to-list 'package-pinned-packages '(cider . "melpa-stable") t)
+ (add-to-list 'package-pinned-packages '(cider . "melpa-stable") t)
 
 ;; (setq package-archives '(("gnu" . "http://elpa.gnu.org/packages/")
 ;;                          ("marmalade" . "http://marmalade-repo.org/packages/")
@@ -62,7 +67,7 @@
     smex
 
     ;; project navigation
-    projectile
+    ;;projectile
 
     ;; colorful parenthesis matching
     rainbow-delimiters
@@ -140,6 +145,8 @@
 (load "setup-clojure.el")
 (load "setup-js.el")
 
+(load "org-mode.el")
+
 ;;;;;;;;; IJS Specific ;;;;;;;;;;;;;;
 
 ;; Set remote user to root by default
@@ -158,3 +165,9 @@
 
 ;; completion help - not sure if this is a good idea
 (which-key-mode)
+
+;; Only do this in graphics mode - random command line edits don't need it. Keeps asking to save, clashes with main invocation of emacs
+(if (display-graphic-p)
+    (desktop-save-mode 1))
+
+
