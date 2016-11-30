@@ -11,3 +11,4 @@ backups
 tramp
 elpa/*
 .emacs.desktop*
+.DS_Store

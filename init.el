@@ -170,4 +170,19 @@
 (if (display-graphic-p)
     (desktop-save-mode 1))
 
+;; M-Left, M-right = Move region. M-up, M-down = Move line(s)
+;; Nah, screws with org mode
+;;(drag-stuff-global-mode nil)
 
+;; highlight line is reasonably subtle in gui
+(global-hl-line-mode t)
+
+;; Nice bullets in org mode
+(require 'org-bullets)
+(add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
+
+;; Sane mouse scroll wheel
+(setq mouse-wheel-scroll-amount '(3))
+(setq mouse-wheel-progressive-speed nil)
+
+(setq-default cursor-type 'box)

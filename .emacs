@@ -3,28 +3,33 @@
 ;;;;;;;;;;;
 
 ;; Don't use hard tabs
+
+
+;; Added by Package.el.  This must come before configurations of
+;; installed packages.  Don't delete this line.  If you don't want it,
+;; just comment it out by adding a semicolon to the start of the line.
+;; You may delete these explanatory comments.
+;;(package-initialize)
+
 (setq-default indent-tabs-mode nil)
 (setq  scroll-preserve-screen-position t)
 
 ;; Don't load site extensions after this file
 (setq inhibit-default-init 1)
 
-;Don't do backup/lock files
+;; Don't do backup/lock files
 (setq make-backup-files t)
 (setq auto-save-visited-file-name t)
 (setq auto-save-timeout 5)
 
-
 (setq create-lockfiles nil)
-
 
 ;; Emacs can automatically create backup files. This tells Emacs to
 ;; put all backups in ~/.emacs.d/backups. More info:
 ;; http://www.gnu.org/software/emacs/manual/html_node/elisp/Backup-Files.html
-(setq backup-directory-alist `(("." . ,(concat user-emacs-directory
-                                               "backups"))))
+(setq backup-directory-alist `(("." . ,(concat user-emacs-directory "backups"))))
 
-                                        ;(setq auto-save-default nil)
+;;(setq auto-save-default nil)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Hide uninteresting stuff
@@ -60,7 +65,7 @@
 ;; C-v = paste, C-z = undo, C-y = redo
 ;; Shift-move = select text
 ;; Hmmmm maybe not. Let's go all in with emacs
-; (cua-mode 1)
+                                        ; (cua-mode 1)
 (setq cua-keep-region-after-copy t) ;; Standard Windows behaviour
 
 ;; delete regions like CUA. Too weird otherwise
@@ -76,8 +81,8 @@
 
 ;;  See if there are local customisations
 
- (if (file-exists-p "~/.emacs.d/init.el")
-     (load "~/.emacs.d/init.el"))
+(if (file-exists-p "~/.emacs.d/init.el")
+    (load "~/.emacs.d/init.el"))
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
@@ -96,7 +101,7 @@
  '(global-rainbow-delimiters-mode t)
  '(package-selected-packages
    (quote
-    (which-key tagedit swiper smex rainbow-delimiters paredit magit iedit ido-ubiquitous hydra company clojure-mode-extra-font-locking cider aggressive-indent ace-window)))
+    (0blayout which-key tagedit swiper smex rainbow-delimiters paredit magit iedit ido-ubiquitous hydra company clojure-mode-extra-font-locking cider aggressive-indent ace-window)))
  '(send-mail-function nil))
 
 (custom-set-faces
@@ -110,7 +115,7 @@
 ;; Overridden keys
 ;;;;;;;;;;;;;;;;;;;
 
-(global-set-key (kbd "C-/") 'undo) ;; Not in OS X text edit :-(
+(global-set-key (kbd "C-/") 'undo) ;; Need to use emacs editing extensions to get this to work in OSX text edit https://gist.github.com/cheapRoc/9670905
 (global-set-key [(control h)] 'delete-backward-char)
 
 ;; Ctrl-w for delete word (like bash)
@@ -141,4 +146,12 @@
 (global-set-key (kbd "C-r") 'isearch-backward-regexp)
 (global-set-key (kbd "C-M-s") 'isearch-forward)
 (global-set-key (kbd "C-M-r") 'isearch-backward)
+
+;; buffer-menu updates on buffer delete and also appears over current window
+(global-set-key "\C-x\C-b" 'ibuffer)
+(add-hook 'ibuffer-mode-hook (lambda () (ibuffer-auto-mode 1)))
+
+;; Nice Completion mode
+(global-set-key (kbd "TAB") #'company-indent-or-complete-common)
+(global-company-mode)
 
