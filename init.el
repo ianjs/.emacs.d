@@ -186,3 +186,8 @@
 (setq mouse-wheel-progressive-speed nil)
 
 (setq-default cursor-type 'box)
+
+;; Nice Completion mode
+(global-set-key (kbd "TAB") #'company-indent-or-complete-common)
+(global-company-mode)
+
