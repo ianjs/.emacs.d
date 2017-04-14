@@ -76,7 +76,7 @@
     tagedit
 
     ;; git integration
-    magit
+    ;;magit
 
     aggressive-indent
     ))
@@ -191,3 +191,9 @@
 (global-set-key (kbd "TAB") #'company-indent-or-complete-common)
 (global-company-mode)
 
+;; Auto save only in GUI on desktop. Might trash a conf file if done on command line
+(setq auto-save-visited-file-name t)
+(setq auto-save-timeout 5)
+
+;; Mmmmmm hoopy symbols like λ
+(global-prettify-symbols-mode +1)

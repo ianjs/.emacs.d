@@ -15,7 +15,7 @@
  '(global-rainbow-delimiters-mode t)
  '(package-selected-packages
    (quote
-    (0blayout which-key tagedit swiper smex rainbow-delimiters paredit magit iedit ido-ubiquitous hydra company clojure-mode-extra-font-locking cider aggressive-indent ace-window)))
+    (org aa-edit-mode org-ac 0blayout which-key tagedit swiper smex rainbow-delimiters paredit magit iedit ido-ubiquitous hydra company clojure-mode-extra-font-locking cider aggressive-indent ace-window)))
  '(send-mail-function nil))
 
 (custom-set-faces
