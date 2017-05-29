@@ -15,7 +15,7 @@
  '(global-rainbow-delimiters-mode t)
  '(package-selected-packages
    (quote
-    (org aa-edit-mode org-ac 0blayout which-key tagedit swiper smex rainbow-delimiters paredit magit iedit ido-ubiquitous hydra company clojure-mode-extra-font-locking cider aggressive-indent ace-window)))
+    (paredit parinfer exec-path-from-shell clojure-mode helm-ack helm-swoop ivy helm markdown-mode flycheck smart-shift visual-regexp-steroids yaml-mode font-lock+-0 all-the-icons neotree puppet-mod puppet-mode org-autolist foo use-package which-key-mode org aa-edit-mode org-ac 0blayout which-key tagedit swiper smex rainbow-delimiters magit iedit ido-ubiquitous hydra company clojure-mode-extra-font-locking cider ace-window)))
  '(send-mail-function nil))
 
 (custom-set-faces
@@ -23,6 +23,7 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(helm-ff-directory ((t nil)))
  '(org-level-6 ((t (:foreground "#7fafaf"))))
  '(org-level-7 ((t (:foreground "dark gray"))))
  '(org-level-8 ((t (:foreground "#cc9073")))))

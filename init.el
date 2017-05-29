@@ -1,100 +1,3 @@
-;;;;
-;; Packages
-;;;;
-;; Added by Package.el.  This must come before configurations of
-;; installed packages.  Don't delete this line.  If you don't want it,
-;; just comment it out by adding a semicolon to the start of the line.
-;; You may delete these explanatory comments.
-(package-initialize)
-
-;; Define package repositories
-(require 'package)
-;; (add-to-list 'package-archives
-;;              '("marmalade" . "http://marmalade-repo.org/packages/") t)
-;; (add-to-list 'package-archives
-;;              '("tromey" . "http://tromey.com/elpa/") t)
-;; (add-to-list 'package-archives
-;;              '("melpa" . "http://melpa.milkbox.net/packages/") t)
-
- (add-to-list 'package-archives
-             '("melpa-stable" . "http://stable.melpa.org/packages/") t)
-
- (add-to-list 'package-pinned-packages '(cider . "melpa-stable") t)
-
-;; (setq package-archives '(("gnu" . "http://elpa.gnu.org/packages/")
-;;                          ("marmalade" . "http://marmalade-repo.org/packages/")
-;;                          ("melpa" . "http://melpa-stable.milkbox.net/packages/")))
-
-
-;; Load and activate emacs packages. Do this first so that the
-;; packages are loaded before you start trying to modify them.
-;; This also sets the load path.
-(package-initialize)
-
-;; Download the ELPA archive description if needed.
-;; This informs Emacs about the latest versions of all packages, and
-;; makes them available for download.
-(when (not package-archive-contents)
-  (package-refresh-contents))
-
-;; The packages you want installed. You can also install these
-;; manually with M-x package-install
-;; Add in your own as you wish:
-(defvar my-packages
-  '( ;; makes handling lisp expressions much, much easier
-    ;; Cheatsheet: http://www.emacswiki.org/emacs/PareditCheatsheet
-    paredit
-
-    ;; key bindings and code colorization for Clojure
-    ;; https://github.com/clojure-emacs/clojure-mode
-    clojure-mode
-
-    ;; extra syntax highlighting for clojure
-    clojure-mode-extra-font-locking
-
-    ;; integration with a Clojure REPL
-    ;; https://github.com/clojure-emacs/cider
-    cider
-
-    ;; allow ido usage in as many contexts as possible. see
-    ;; customizations/navigation.el line 23 for a description
-    ;; of ido
-    ido-ubiquitous
-
-    ;; Enhances M-x to allow easier execution of commands. Provides
-    ;; a filterable list of possible commands in the minibuffer
-    ;; http://www.emacswiki.org/emacs/Smex
-    smex
-
-    ;; project navigation
-    ;;projectile
-
-    ;; colorful parenthesis matching
-    rainbow-delimiters
-
-    ;; edit html tags like sexps
-    tagedit
-
-    ;; git integration
-    ;;magit
-
-    aggressive-indent
-    ))
-
-;; On OS X, an Emacs instance started from the graphical user
-;; interface will have a different environment than a shell in a
-;; terminal window, because OS X does not run a shell during the
-;; login. Obviously this will lead to unexpected results when
-;; calling external utilities like make from Emacs.
-;; This library works around this problem by copying important
-;; environment variables from the user's shell.
-;; https://github.com/purcell/exec-path-from-shell
-(if (eq system-type 'darwin)
-    (add-to-list 'my-packages 'exec-path-from-shell))
-
-(dolist (p my-packages)
-  (when (not (package-installed-p p))
-    (package-install p)))
 
 
 ;; Place downloaded elisp files in ~/.emacs.d/vendor. You'll then be able
@@ -119,6 +22,9 @@
 ;; Add a directory to our load path so that when you `load` things
 ;; below, Emacs knows where to look for the corresponding file.
 (add-to-list 'load-path "~/.emacs.d/customizations")
+
+;; Load all packages in one place
+(load "mypackages.el")
 
 ;; Sets up exec-path-from-shell so that Emacs will use the correct
 ;; environment variables
@@ -149,6 +55,12 @@
 
 ;;;;;;;;; IJS Specific ;;;;;;;;;;;;;;
 
+;; Separate stuff that is for graphics mode only
+
+(if (display-graphic-p)
+    (load "guistuff.el"))
+
+
 ;; Set remote user to root by default
 (setq tramp-default-user "root")
 
@@ -157,29 +69,22 @@
 
 (setq cider-repl-use-pretty-printing t)
 
-;; try to keep indenting nice at all times
-(global-aggressive-indent-mode 1)
-
 ;; Nicer font on OSX
 (set-face-attribute 'default nil :family "Source Code Pro" :weight 'Light  :height 160)
 
-;; completion help - not sure if this is a good idea
+;; completion help 
 (which-key-mode)
-
-;; Only do this in graphics mode - random command line edits don't need it. Keeps asking to save, clashes with main invocation of emacs
-(if (display-graphic-p)
-    (desktop-save-mode 1))
 
 ;; M-Left, M-right = Move region. M-up, M-down = Move line(s)
 ;; Nah, screws with org mode
 ;;(drag-stuff-global-mode nil)
 
-;; highlight line is reasonably subtle in gui
-(global-hl-line-mode t)
-
-;; Nice bullets in org mode
+;;; Org mode customisation
+;; Nice bullets
 (require 'org-bullets)
 (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
+
+(setq org-return-follows-link 1)
 
 ;; Sane mouse scroll wheel
 (setq mouse-wheel-scroll-amount '(3))
@@ -191,9 +96,10 @@
 (global-set-key (kbd "TAB") #'company-indent-or-complete-common)
 (global-company-mode)
 
-;; Auto save only in GUI on desktop. Might trash a conf file if done on command line
-(setq auto-save-visited-file-name t)
-(setq auto-save-timeout 5)
+;; Wavering on auto save. Might trash a conf file if done on command line.
+;; Even GUI mode migt kill a remote file when using Tramp.
+;;(setq auto-save-visited-file-name nil)
+;;(setq auto-save-timeout 5)
 
 ;; Mmmmmm hoopy symbols like λ
 (global-prettify-symbols-mode +1)
