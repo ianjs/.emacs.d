@@ -12,3 +12,4 @@ tramp
 elpa/*
 .emacs.desktop*
 .DS_Store
+snippets

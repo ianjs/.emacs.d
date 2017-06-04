@@ -13,6 +13,7 @@
 ;;              '("marmalade" . "http://marmalade-repo.org/packages/") t)
 ;; (add-to-list 'package-archives
 ;;              '("tromey" . "http://tromey.com/elpa/") t)
+ 
 ;; (add-to-list 'package-archives
 ;;              '("melpa" . "http://melpa.milkbox.net/packages/") t)
 
@@ -70,7 +71,8 @@
 ;; allow ido usage in as many contexts as possible. see
 ;; customizations/navigation.el line 23 for a description
 ;; of ido
-(use-package ido-ubiquitous)
+; Replaced by helm
+;; (use-package ido-ubiquitous)
 
 ;; Enhances M-x to allow easier execution of commands. Provides
 ;; a filterable list of possible commands in the minibuffer
@@ -78,8 +80,9 @@
 ;; Switched to helm
 ;; (use-package smex)
 
-;; project navigation
-;;projectile
+(use-package projectile 
+  :init
+    (projectile-global-mode))
 
 ;; colorful parenthesis matching
 (use-package rainbow-delimiters)
@@ -161,4 +164,21 @@
 
 (use-package helm-swoop)
 
+(use-package helm-projectile
+  :bind (("C-x C-b" . helm-projectile-switch-to-buffer))
+  :init
+    (helm-projectile-on))
+
+(use-package yasnippet
+  :config
+    (yas-reload-all)
+    (add-hook 'prog-mode-hook #'yas-minor-mode))
+
+;; view only files in a project
+;; hmmm seems to be broken
+;; (use-package perspective
+;;   :init 
+;;     (persp-mode))
+
+;;(use-package persp-projectile)
 

@@ -1,26 +1,13 @@
-
+;; init.el
 
 ;; Place downloaded elisp files in ~/.emacs.d/vendor. You'll then be able
-;; to load them.
+;; to "load" them.
 ;;
-;; For example, if you download yaml-mode.el to ~/.emacs.d/vendor,
-;; then you can add the following code to this file:
-;;
-;; (require 'yaml-mode)
-;; (add-to-list 'auto-mode-alist '("\\.yml$" . yaml-mode))
-;; 
-;; Adding this code will make Emacs enter yaml mode whenever you open
-;; a .yml file
 (add-to-list 'load-path "~/.emacs.d/vendor")
 (add-to-list 'exec-path "/usr/local/bin")
 (add-to-list 'exec-path "~/bin")
 
-;;;;
-;; Customization
-;;;;
-
-;; Add a directory to our load path so that when you `load` things
-;; below, Emacs knows where to look for the corresponding file.
+;; Add a directory to our load path so that we can `load` them
 (add-to-list 'load-path "~/.emacs.d/customizations")
 
 ;; Load all packages in one place

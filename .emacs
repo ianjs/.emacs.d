@@ -1,8 +1,10 @@
-;;;;;;;;;;;
-;; Sanities
-;;;;;;;;;;;
-
-;; Save customisations in one file to avoid screwing up .emacs
+;;
+;; Symlink this file into home directory as .emacs. 
+;;
+;; Can also use it stand alone as the basic niceties are included here and it will load
+;; .emacs.d/init.el of one exists.
+;; That way the .emacs can be copied around to use at the shell but the full blown environment
+;; for the GUI can just checked out of github. Also keeps command line loads light weight.
 
 ;; Added by Package.el.  This must come before configurations of
 ;; installed packages.  Don't delete this line.  If you don't want it,
@@ -10,15 +12,17 @@
 ;; You may delete these explanatory comments.
 ;;(package-initialize)
 
+;; Force customisations to a file rather than having the init file poked at
 (setq custom-file "~/.emacs.d/emacs-custom.el")
 (if (not (file-exists-p custom-file)) 
     (write-region "" nil custom-file)) 
 (load custom-file)
 
-;; Emacs can automatically create backup files. This tells Emacs to
-;; put all backups in ~/.emacs.d/backups. More info:
-;; http://www.gnu.org/software/emacs/manual/html_node/elisp/Backup-Files.html
-(setq backup-directory-alist `(("." . ,(concat user-emacs-directory "backups"))))
+;; Put all backups in system temp dir
+(setq backup-directory-alist
+      `((".*" . ,temporary-file-directory)))
+(setq auto-save-file-name-transforms
+      `((".*" ,temporary-file-directory t)))
 
 ;; Don't do backup/lock files
 (setq make-backup-files t)
@@ -30,24 +34,20 @@
 ;; Don't load site extensions after this file
 (setq inhibit-default-init 1)
 
-
-;;Don't do this on command line. Could save to a config file and break something while typing
+;;Don't do this on command line. Could save to a config file and 
+;; break something on a production server while typing
 ;;(setq auto-save-visited-file-name t)
 ;;(setq auto-save-timeout 5)
 ;;(setq auto-save-default nil)
 
+;; Don't need no stinking menu
 (menu-bar-mode -1)
 
 ;; Go straight to scratch buffer on startup
 (setq inhibit-startup-message t)
 
-;; CUA Mode
-;; Regions get C-x = cut, C-c = copy
-;; C-v = paste, C-z = undo, C-y = redo
-;; Shift-move = select text
-;; Hmmmm maybe not. Let's go all in with emacs
-;; (cua-mode 1)
-(setq cua-keep-region-after-copy t) ;; Standard Windows behaviour
+;; Saner behavior
+(setq cua-keep-region-after-copy t)
 
 ;; delete regions like CUA. Too weird otherwise
 (delete-selection-mode 1)
@@ -59,22 +59,20 @@
 ;; Only prompt with y/n
 (fset 'yes-or-no-p 'y-or-n-p)
 
-
 ;;;;;;;;;;;;;;;;;;;
 ;; Overridden keys
 ;;;;;;;;;;;;;;;;;;;
 
-;; Need to use emacs editing extensions to get this to work in OSX text edit https://gist.github.com/cheapRoc/9670905
+;; Use emacs editing extensions and standard emacs keys also work in OSX text edit 
+;; https://gist.github.com/cheapRoc/9670905
 (global-set-key (kbd "C-/") 'undo)
-
 (global-set-key [(control h)] 'delete-backward-char)
 
 ;; Kill current buffer without prompt by default
 (global-set-key (kbd "C-x k") 'kill-this-buffer)
 
-;; try?
-;;(require 'ido)
-;;(ido-mode t)
+;; Goto line like xemacs (apparently) - better it is one key
+(global-set-key (kbd "M-g") 'goto-line)
 
 ;; Ctrl-w for delete word (like bash)
 (defun kill-region-or-backwards-kill-word ()
@@ -84,7 +82,6 @@
       (kill-region (point) (mark) )
     (backward-kill-word 1)))
 (global-set-key "\C-w" 'kill-region-or-backwards-kill-word)
-
 
 ;; Interactive search key bindings. By default, C-s runs
 ;; isearch-forward, so this swaps the bindings.
@@ -98,12 +95,7 @@
 (add-hook 'ibuffer-mode-hook (lambda () (ibuffer-auto-mode 1)))
 
 
-;; Cycle windows with repeatable keystroke
-;; Sigh. Won't work in terminal
-;;(global-set-key (kbd "C-.") 'other-window)
-;;(global-set-key (kbd "C-,") 'prev-window)
-
-;; Do it with F6
+;; Cycle windows with F6
 (defun other-window-or-switch-buffer ()
   "Call `other-window' if more than one window is visible, switch
 to next buffer otherwise."
@@ -111,7 +103,6 @@ to next buffer otherwise."
   (if (one-window-p)
       (switch-to-buffer nil)
     (other-window 1)))
-
 (global-set-key (kbd "<f6>") #'other-window-or-switch-buffer)
 
 ;;  See if there are local customisations

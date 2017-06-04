@@ -18,7 +18,6 @@
 ;; highlight line is reasonably subtle in gui
 (global-hl-line-mode t)
 
-
 ;; Neo tree
 (use-package neotree)
 (global-set-key [f8] 'neotree-toggle)
