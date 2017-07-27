@@ -10,12 +10,17 @@
 ;; Add a directory to our load path so that we can `load` them
 (add-to-list 'load-path "~/.emacs.d/customizations")
 
-;; Load all packages in one place
+;;;;;;;;;;;;;;;;; Load all packages in one place
 (load "mypackages.el")
 
 ;; Sets up exec-path-from-shell so that Emacs will use the correct
 ;; environment variables
-(load "shell-integration.el")
+;; Sets up exec-path-from shell
+;; https://github.com/purcell/exec-path-from-shell
+(when (memq window-system '(mac ns))
+  (exec-path-from-shell-initialize)
+  (exec-path-from-shell-copy-envs
+   '("PATH")))
 
 ;; These customizations make it easier for you to navigate files,
 ;; switch buffers, and choose options from the minibuffer.
@@ -28,24 +33,20 @@
 ;; These customizations make editing a bit nicer.
 (load "editing.el")
 
-;; Hard-to-categorize customizations
-(load "misc.el")
-
 ;; For editing lisps
 (load "elisp-editing.el")
 
 ;; Langauage-specific
 (load "setup-clojure.el")
 (load "setup-js.el")
-
 (load "org-mode.el")
+
+(if (display-graphic-p)
+    (load "guistuff.el"))
 
 ;;;;;;;;; IJS Specific ;;;;;;;;;;;;;;
 
 ;; Separate stuff that is for graphics mode only
-
-(if (display-graphic-p)
-    (load "guistuff.el"))
 
 
 ;; Set remote user to root by default
@@ -61,17 +62,6 @@
 
 ;; completion help 
 (which-key-mode)
-
-;; M-Left, M-right = Move region. M-up, M-down = Move line(s)
-;; Nah, screws with org mode
-;;(drag-stuff-global-mode nil)
-
-;;; Org mode customisation
-;; Nice bullets
-(require 'org-bullets)
-(add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
-
-(setq org-return-follows-link 1)
 
 ;; Sane mouse scroll wheel
 (setq mouse-wheel-scroll-amount '(3))

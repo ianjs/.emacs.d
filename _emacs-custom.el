@@ -20,7 +20,7 @@
  '(global-rainbow-delimiters-mode t)
  '(package-selected-packages
    (quote
-    (auto-yasnippet clojure-snippets persp-projectile perspective helm-projectile paredit parinfer exec-path-from-shell clojure-mode helm-ack helm-swoop ivy helm markdown-mode flycheck smart-shift visual-regexp-steroids yaml-mode font-lock+-0 all-the-icons neotree puppet-mod puppet-mode org-autolist foo use-package which-key-mode org aa-edit-mode org-ac 0blayout which-key tagedit swiper smex rainbow-delimiters magit iedit hydra company clojure-mode-extra-font-locking cider ace-window)))
+    (helm-org-rifle auto-yasnippet clojure-snippets persp-projectile perspective helm-projectile paredit parinfer exec-path-from-shell clojure-mode helm-ack helm-swoop ivy helm markdown-mode flycheck smart-shift visual-regexp-steroids yaml-mode font-lock+-0 all-the-icons neotree puppet-mod puppet-mode org-autolist foo use-package which-key-mode org aa-edit-mode org-ac 0blayout which-key tagedit swiper smex rainbow-delimiters magit iedit hydra company clojure-mode-extra-font-locking cider ace-window)))
  '(send-mail-function nil))
 
 (custom-set-faces

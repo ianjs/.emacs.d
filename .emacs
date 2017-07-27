@@ -1,8 +1,9 @@
 ;;
-;; Symlink this file into home directory as .emacs. 
+;; Symlink this file into home directory as .emacs
 ;;
 ;; Can also use it stand alone as the basic niceties are included here and it will load
-;; .emacs.d/init.el of one exists.
+;; .emacs.d/init.el of one exists. 
+
 ;; That way the .emacs can be copied around to use at the shell but the full blown environment
 ;; for the GUI can just checked out of github. Also keeps command line loads light weight.
 
@@ -13,7 +14,7 @@
 ;;(package-initialize)
 
 ;; Force customisations to a file rather than having the init file poked at
-(setq custom-file "~/.emacs.d/emacs-custom.el")
+(setq custom-file "~/.emacs.d/_emacs-custom.el")
 (if (not (file-exists-p custom-file)) 
     (write-region "" nil custom-file)) 
 (load custom-file)
@@ -30,6 +31,9 @@
 
 ;; Stop screen jumping around so much
 (setq  scroll-preserve-screen-position t)
+
+;; PageDown all the way to the end!@!
+(setq scroll-error-top-bottom t)
 
 ;; Don't load site extensions after this file
 (setq inhibit-default-init 1)
@@ -80,7 +84,7 @@
   (interactive)
   (if (and transient-mark-mode mark-active)
       (kill-region (point) (mark) )
-    (backward-kill-word 1)))
+    (backward-kill-word 1))) 
 (global-set-key "\C-w" 'kill-region-or-backwards-kill-word)
 
 ;; Interactive search key bindings. By default, C-s runs
@@ -94,6 +98,8 @@
 (global-set-key "\C-x\C-b" 'ibuffer)
 (add-hook 'ibuffer-mode-hook (lambda () (ibuffer-auto-mode 1)))
 
+;; Don't use hard tabs
+(setq-default indent-tabs-mode nil)
 
 ;; Cycle windows with F6
 (defun other-window-or-switch-buffer ()
@@ -105,7 +111,11 @@ to next buffer otherwise."
     (other-window 1)))
 (global-set-key (kbd "<f6>") #'other-window-or-switch-buffer)
 
+;; Don't hassle about running downcase-region
+(put 'downcase-region 'disabled nil)
+
 ;;  See if there are local customisations
 (if (file-exists-p "~/.emacs.d/init.el")
     (load "~/.emacs.d/init.el"))
+
 
