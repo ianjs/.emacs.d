@@ -32,8 +32,11 @@
 ;; Stop screen jumping around so much
 (setq  scroll-preserve-screen-position t)
 
-;; PageDown all the way to the end!@!
+;; PageDown all the way to the end!!
 (setq scroll-error-top-bottom t)
+
+;; Follow symlinks - I'm going to anyway
+(setq vc-follow-symlinks t)
 
 ;; Don't load site extensions after this file
 (setq inhibit-default-init 1)

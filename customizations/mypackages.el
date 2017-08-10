@@ -97,7 +97,7 @@
 
 (use-package which-key)
 
-(use-package company)
+;;(use-package company)
 
 (use-package puppet-mode)
 
