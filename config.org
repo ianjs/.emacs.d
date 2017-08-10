@@ -1,0 +1,514 @@
+#+TITLE: Emacs configuration file
+#+AUTHOR: Ian Slinger
+#+BABEL: :cache yes
+#+LATEX_HEADER: \usepackage{parskip}
+#+LATEX_HEADER: \usepackage{inconsolata}
+#+LATEX_HEADER: \usepackage[utf8]{inputenc}
+#+PROPERTY: header-args :tangle yes
+
+
+* General settings
+
+  These are the base setting for GNU/Emacs for all environments ie GUI on OS X/Linux or command line for 
+  Q&D editing.
+
+** Enviroment initialisation
+Profiling:
+#+BEGIN_SRC emacs-lisp
+(defvar my-config-el-start-time (current-time) "Time when config.el was started")
+;(profiler-start 'cpu);; test startup performance - create report with M-x profiler-report
+
+
+#+END_SRC
+
+*** Paths:
+#+BEGIN_SRC emacs-lisp
+
+(add-to-list 'exec-path "/usr/local/bin")
+(add-to-list 'exec-path "~/bin")
+
+;; Add a directory to our load path so that we can `load` them
+(add-to-list 'load-path "~/.emacs.d/customizations")
+
+#+END_SRC
+
+
+* Package initialisation
+
+Use =use-package= as much as possible so just bootstrap that to get other packages.
+
+** Bootstrap use-package
+
+#+BEGIN_SRC emacs-lisp
+
+;;;;
+;; Added by Package.el. This must come before configurations of
+;; installed packages.  Don't delete this line.  If you don't want it,
+;; just comment it out by adding a semicolon to the start of the line.
+;; You may delete these explanatory comments.
+(package-initialize)
+
+;; Define package repositories
+(require 'package)
+
+(add-to-list 'package-archives
+             '("melpa-stable" . "http://stable.melpa.org/packages/") t)
+
+(add-to-list 'package-pinned-packages '(cider . "melpa-stable") t)
+
+;; latest org mode
+(add-to-list 'package-archives '("org" . "http://orgmode.org/elpa/") t)
+
+;; Load and activate emacs packages. Do this first so that the
+;; packages are loaded before you start trying to modify them.
+;; This also sets the load path.
+(package-initialize)
+
+;; Download the ELPA archive description if needed.
+;; This informs Emacs about the latest versions of all packages, and
+;; makes them available for download.
+(when (not package-archive-contents)
+  (package-refresh-contents))
+
+;; Install enough packages to bootstrap use-package
+(dolist (p '(use-package))
+  (when (not (package-installed-p p))
+    (package-install p)))
+
+(setq use-package-always-ensure t)
+
+#+END_SRC
+
+** The packages
+
+#+BEGIN_SRC emacs-lisp
+
+; nice utf-8 bullets in org mode
+(use-package org-bullets)
+
+;; makes handling lisp expressions much, much easier
+;; Cheatsheet: http://www.emacswiki.org/emacs/PareditCheatsheet
+(use-package paredit)
+
+;; key bindings and code colorization for Clojure
+;; https://github.com/clojure-emacs/clojure-mode
+(use-package clojure-mode)
+
+;; extra syntax highlighting for clojure
+(use-package clojure-mode-extra-font-locking)
+
+;; integration with a Clojure REPL
+;; https://github.com/clojure-emacs/cider
+(use-package cider)
+
+;; Project management
+(use-package projectile 
+  :init
+    (projectile-global-mode))
+
+;; colorful parenthesis matching
+(use-package rainbow-delimiters)
+
+;; edit html tags like sexps
+(use-package tagedit)
+
+;; git integration
+(use-package magit)
+
+;;aggressive-indent
+
+(use-package which-key)
+
+;; On OS X, an Emacs instance started from the graphical user
+;; interface will have a different environment than a shell in a
+;; terminal window, because OS X does not run a shell during the
+;; login. Obviously this will lead to unexpected results when
+;; calling external utilities like make from Emacs.
+;; This library works around this problem by copying important
+;; environment variables from the user's shell.
+;; https://github.com/purcell/exec-path-from-shell
+(if (eq system-type 'darwin)
+    (use-package exec-path-from-shell))
+
+(use-package parinfer
+  :ensure t
+  :bind
+  (("C-," . parinfer-toggle-mode))
+  :init
+  (progn
+    (setq parinfer-extensions
+          '(defaults       ; should be included.
+             pretty-parens  ; different paren styles for different modes.
+             paredit        ; Introduce some paredit commands.
+             smart-tab      ; C-b & C-f jump positions and smart shift with tab & S-tab.
+             smart-yank))   ; Yank behavior depend on mode.
+    (add-hook 'clojure-mode-hook #'parinfer-mode)
+    (add-hook 'emacs-lisp-mode-hook #'parinfer-mode)
+    (add-hook 'common-lisp-mode-hook #'parinfer-mode)
+    (add-hook 'scheme-mode-hook #'parinfer-mode)
+    (add-hook 'lisp-mode-hook #'parinfer-mode)))
+
+(use-package visual-regexp-steroids
+  :ensure
+  :demand
+  :bind (("C-M-r" . vr/isearch-backward)
+         ("C-M-s" . vr/isearch-forward)
+         ("M-%" . vr/query-replace)))
+
+(use-package yaml-mode
+  :mode ("\\.\\(e?ya?\\|ra\\)ml\\'" . yaml-mode))
+
+(use-package markdown-mode
+  :ensure t
+  :commands (markdown-mode gfm-mode)
+  :mode (("README\\.md\\'" . gfm-mode)
+         ("\\.md\\'" . markdown-mode)
+         ("\\.markdown\\'" . markdown-mode))
+  :config (setq markdown-command "multimarkdown"))
+
+#+END_SRC
+
+*** Helm stuff
+
+#+BEGIN_SRC emacs-lisp
+
+(use-package helm
+  :bind (("M-x" . helm-M-x)
+         ("M-<f5>" . helm-find-files)
+         ("C-x C-b" . helm-buffers-list)
+         ([S-f10] . helm-recentf)
+         ("C-x C-f" . helm-find-files))
+
+  :init
+     (progn
+       (setq helm-buffers-fuzzy-matching t 
+             helm-buffer-max-length nil)))
+       
+
+(use-package helm-swoop)
+
+(use-package helm-projectile
+  :bind (("C-x C-b" . helm-projectile-switch-to-buffer))
+  :init
+    (helm-projectile-on))
+
+(use-package yasnippet
+  :config
+    (yas-reload-all)
+    (add-hook 'prog-mode-hook #'yas-minor-mode))
+
+;; view only files in a project
+;; hmmm seems to be broken
+;; (use-package perspective
+;;   :init 
+;;     (persp-mode))
+
+;;(use-package persp-projectile)
+
+
+#+END_SRC
+
+
+** Specific package setuo
+*** Org mode
+
+#+BEGIN_SRC emacs-lisp
+
+;; Nice bullets
+(require 'org-bullets)
+(add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
+
+(setq org-return-follows-link 1)
+
+(setq org-hide-leading-stars t)
+(setq org-startup-indented t)
+
+;; Don't let M-Ret split lines - why would you?
+(setq org-M-RET-may-split-line '((item . nil)))
+
+;; allow helm to rifle through org buffers
+(use-package helm-org-rifle)
+
+#+END_SRC
+
+* OS Environment specifics
+
+#+BEGIN_SRC emacs-lisp
+
+;; Sets up exec-path-from-shell so that Emacs will use the correct
+;; environment variables
+;; Sets up exec-path-from shell
+;; https://github.com/purcell/exec-path-from-shell
+(when (memq window-system '(mac ns))
+  (exec-path-from-shell-initialize)
+  (exec-path-from-shell-copy-envs
+   '("PATH")))
+
+#+END_SRC
+
+
+
+* Navigation
+
+#+BEGIN_SRC emacs-lisp
+;; "When several buffers visit identically-named files,
+;; Emacs must give the buffers distinct names. The usual method
+;; for making buffer names unique adds ‘<2>’, ‘<3>’, etc. to the end
+;; of the buffer names (all but one of them).
+;; The forward naming method includes part of the file's directory
+;; name at the beginning of the buffer name
+;; https://www.gnu.org/software/emacs/manual/html_node/emacs/Uniquify.html
+(require 'uniquify)
+(setq uniquify-buffer-name-style 'forward)
+
+;; Turn on recent file mode so that you can more easily switch to
+;; recently edited files when you first start emacs
+(setq recentf-save-file (concat user-emacs-directory ".recentf"))
+(require 'recentf)
+(recentf-mode 1)
+(setq recentf-max-menu-items 40)
+#+END_SRC
+
+* UI Stuff
+
+#+BEGIN_SRC emacs-lisp
+
+;; These customizations change the way emacs looks in GUI mode. 
+
+;; Remove the graphical toolbar at the top. 
+(when (fboundp 'tool-bar-mode)
+  (tool-bar-mode -1))
+
+;; Don't show native OS scroll bars for buffers because they're redundant
+(when (fboundp 'scroll-bar-mode)
+  (scroll-bar-mode -1))
+
+;; Color Themes
+;; Read http://batsov.com/articles/2012/02/19/color-theming-in-emacs-reloaded/
+;; for a great explanation of emacs color themes.
+;; https://www.gnu.org/software/emacs/manual/html_node/emacs/Custom-Themes.html
+;; for a more technical explanation.
+(add-to-list 'custom-theme-load-path "~/.emacs.d/themes")
+(add-to-list 'load-path "~/.emacs.d/themes")
+(load-theme 'zenburn t)
+
+;; Set selection colour to something actually visible in this theme
+(set-face-attribute 'region nil :background "#aaa")
+
+
+;; increase font size for better readability
+(set-face-attribute 'default nil :height 140)
+
+;; Uncomment the lines below by removing semicolons and play with the
+;; values in order to set the width (in characters wide) and height
+;; (in lines high) Emacs will have whenever you start it
+
+;; Now done by restoring desktop
+;;(setq initial-frame-alist '((top . 0) (left . 0) (width . 156) (height . 39)))
+
+;; These settings relate to how emacs interacts with your operating system
+(setq ;; makes killing/yanking interact with the clipboard
+    x-select-enable-clipboard t
+
+    ;; I'm actually not sure what this does but it's recommended?
+     x-select-enable-primary t
+
+    ;; Save clipboard strings into kill ring before replacing them.
+    ;; When one selects something in another program to paste it into Emacs,
+    ;; but kills something in Emacs before actually pasting it,
+    ;; this selection is gone unless this variable is non-nil
+     save-interprogram-paste-before-kill t
+
+     ;; Shows all options when running apropos. For more info,
+     ;; https://www.gnu.org/software/emacs/manual/html_node/emacs/Apropos.html
+     apropos-do-all t
+
+     ;; Mouse yank commands yank at point instead of at click.
+     mouse-yank-at-point t
+     
+     ;; no bell
+     ring-bell-function 'ignore)
+
+;; No cursor blinking, it's distracting
+(blink-cursor-mode 0)
+
+;; full path in title bar
+(setq-default frame-title-format "%b (%f)")
+
+;; don't pop up font menu
+(global-set-key (kbd "s-t") '(lambda () (interactive)))
+
+ 
+
+
+#+END_SRC
+
+* Editing
+
+#+BEGIN_SRC emacs-lisp
+
+;; Customizations relating to editing a buffer.
+
+;; Key binding to use "hippie expand" for text autocompletion
+;; http://www.emacswiki.org/emacs/HippieExpand
+(global-set-key (kbd "M-/") 'hippie-expand)
+
+;; Lisp-friendly hippie expand
+(setq hippie-expand-try-functions-list
+      '(try-expand-dabbrev
+        try-expand-dabbrev-all-buffers
+        try-expand-dabbrev-from-kill
+        try-complete-lisp-symbol-partially
+        try-complete-lisp-symbol))
+
+;; Highlights matching parenthesis
+(show-paren-mode 1)
+
+;; DON'T Highlight current line
+(global-hl-line-mode -1)
+
+;; When you visit a file, point goes to the last place where it
+;; was when you previously visited the same file.
+;; http://www.emacswiki.org/emacs/SavePlace
+(require 'saveplace)
+(setq-default save-place t)
+
+;; keep track of saved places in ~/.emacs.d/places
+(setq save-place-file (concat user-emacs-directory "places"))
+
+;; comments
+(defun toggle-comment-on-line ()
+  "comment or uncomment current line"
+  (interactive)
+  (comment-or-uncomment-region (line-beginning-position) (line-end-position)))
+(global-set-key (kbd "C-;") 'toggle-comment-on-line)
+
+;; yay rainbows!
+(rainbow-delimiters-mode)
+
+;; use 2 spaces for tabs
+(defun die-tabs ()
+  (interactive)
+  (set-variable 'tab-width 2)
+  (mark-whole-buffer)
+  (untabify (region-beginning) (region-end))
+  (keyboard-quit))
+
+;; fix weird os x kill error
+(defun ns-get-pasteboard ()
+  "Returns the value of the pasteboard, or nil for unsupported formats."
+  (condition-case nil
+      (ns-get-selection-internal 'CLIPBOARD)
+    (quit nil)))
+
+(setq electric-indent-mode nil)
+
+
+
+#+END_SRC
+* Elisp Editing
+
+#+BEGIN_SRC emacs-lisp
+
+;; Automatically load paredit when editing a lisp file
+;; More at http://www.emacswiki.org/emacs/ParEdit
+(autoload 'enable-paredit-mode "paredit" "Turn on pseudo-structural editing of Lisp code." t)
+(add-hook 'emacs-lisp-mode-hook       #'enable-paredit-mode)
+(add-hook 'eval-expression-minibuffer-setup-hook #'enable-paredit-mode)
+(add-hook 'ielm-mode-hook             #'enable-paredit-mode)
+(add-hook 'lisp-mode-hook             #'enable-paredit-mode)
+(add-hook 'lisp-interaction-mode-hook #'enable-paredit-mode)
+(add-hook 'scheme-mode-hook           #'enable-paredit-mode)
+
+;; eldoc-mode shows documentation in the minibuffer when writing code
+;; http://www.emacswiki.org/emacs/ElDoc
+(add-hook 'emacs-lisp-mode-hook 'turn-on-eldoc-mode)
+(add-hook 'lisp-interaction-mode-hook 'turn-on-eldoc-mode)
+(add-hook 'ielm-mode-hook 'turn-on-eldoc-mode)
+
+
+
+#+END_SR
+
+
+* Setup Clojure
+
+#+BEGIN_SRC emacs-lisp
+
+;;;;
+;; Clojure
+;;;;
+
+;; Enable paredit for Clojure
+;(add-hook 'clojure-mode-hook 'enable-paredit-mode)
+
+;; This is useful for working with camel-case tokens, like names of
+;; Java classes (e.g. JavaClassName)
+(add-hook 'clojure-mode-hook 'subword-mode)
+
+;; A little more syntax highlighting
+(require 'clojure-mode-extra-font-locking)
+
+;; syntax hilighting for midje
+(add-hook 'clojure-mode-hook
+          (lambda ()
+            (setq inferior-lisp-program "lein repl")
+            (font-lock-add-keywords
+             nil
+             '(("(\\(facts?\\)"
+                (1 font-lock-keyword-face))
+               ("(\\(background?\\)"
+                (1 font-lock-keyword-face))))
+            (define-clojure-indent (fact 1))
+            (define-clojure-indent (facts 1))))
+
+;;;;
+;; Cider
+;;;;
+
+;; provides minibuffer documentation for the code you're typing into the repl
+;;(add-hook 'cider-mode-hook 'eldoc-mode)
+
+;; go right to the REPL buffer when it's finished connecting
+(setq cider-repl-pop-to-buffer-on-connect t)
+
+;; When there's a cider error, show its buffer and switch to it
+(setq cider-show-error-buffer t)
+(setq cider-auto-select-error-buffer t)
+
+;; Where to store the cider history.
+(setq cider-repl-history-file "~/.emacs.d/cider-history")
+
+;; Wrap when navigating history.
+(setq cider-repl-wrap-history t)
+
+;; enable paredit in your REPL
+;(add-hook 'cider-repl-mode-hook 'paredit-mode)
+
+;; Use clojure mode for other extensions
+(add-to-list 'auto-mode-alist '("\\.edn$" . clojure-mode))
+(add-to-list 'auto-mode-alist '("\\.boot$" . clojure-mode))
+(add-to-list 'auto-mode-alist '("\\.cljs.*$" . clojure-mode))
+(add-to-list 'auto-mode-alist '("lein-env" . enh-ruby-mode))
+
+
+
+
+#+END_SRC
+
+* Setup Org Mode
+#+BEGIN_SRC emacs-lisp
+
+(setq org-return-follows-link 1)
+
+(setq org-hide-leading-stars t)
+(setq org-startup-indented t)
+
+;; Don't let M-Ret split lines - why would you?
+(setq org-M-RET-may-split-line '((item . nil)))
+
+;; allow helm to rifle through org buffers
+(use-package helm-org-rifle)
+
+
+#+END_SRC
