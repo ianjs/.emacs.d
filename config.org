@@ -171,7 +171,8 @@ Use =use-package= as much as possible so just bootstrap that to get other packag
   :mode (("README\\.md\\'" . gfm-mode)
          ("\\.md\\'" . markdown-mode)
          ("\\.markdown\\'" . markdown-mode))
-  :config (setq markdown-command "multimarkdown"))
+  :config (setq markdown-command "multimarkdown"
+                markdown-header-scaling 1))
 
 #+END_SRC
 
