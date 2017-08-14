@@ -13,17 +13,19 @@
 ;; You may delete these explanatory comments.
 ;;(package-initialize)
 
-;; Force customisations to a file rather than having the init file poked at
-(setq custom-file "~/.emacs.d/_emacs-custom.el")
-(if (not (file-exists-p custom-file)) 
-    (write-region "" nil custom-file)) 
-(load custom-file)
+(set-default-coding-systems 'utf-8)
 
 ;; Put all backups in system temp dir
 (setq backup-directory-alist
       `((".*" . ,temporary-file-directory)))
 (setq auto-save-file-name-transforms
       `((".*" ,temporary-file-directory t)))
+
+;; Force customisations to a file rather than having the .emacs or init file poked at
+(setq custom-file "~/.emacs.d/_emacs-custom.el")
+(if (not (file-exists-p custom-file)) 
+    (write-region "" nil custom-file)) 
+(load custom-file)
 
 ;; Don't do backup/lock files
 (setq make-backup-files t)
@@ -47,7 +49,7 @@
 ;;(setq auto-save-timeout 5)
 ;;(setq auto-save-default nil)
 
-;; Don't need no stinking menu
+;; Don't need no steenking menu
 (menu-bar-mode -1)
 
 ;; Go straight to scratch buffer on startup
@@ -66,6 +68,21 @@
 ;; Only prompt with y/n
 (fset 'yes-or-no-p 'y-or-n-p)
 
+;; Don't hassle about running downcase-region
+(put 'downcase-region 'disabled nil)
+
+;; Don't use hard tabs
+(setq-default indent-tabs-mode nil)
+
+;; Cycle windows with F6
+(defun other-window-or-switch-buffer ()
+  "Call `other-window' if more than one window is visible, switch to next buffer otherwise."
+  (interactive)
+  (if (one-window-p)
+      (switch-to-buffer nil)
+    (other-window 1)))
+(global-set-key (kbd "<f6>") #'other-window-or-switch-buffer)
+
 ;;;;;;;;;;;;;;;;;;;
 ;; Overridden keys
 ;;;;;;;;;;;;;;;;;;;
@@ -81,7 +98,7 @@
 ;; Goto line like xemacs (apparently) - better it is one key
 (global-set-key (kbd "M-g") 'goto-line)
 
-;; Ctrl-w for delete word (like bash)
+;; Ctrl-w for delete word (for consistency bash)
 (defun kill-region-or-backwards-kill-word ()
   "If transient mark mode is on and a region is selected, call `kill-region'; otherwise call `backward-kill-word'"
   (interactive)
@@ -101,23 +118,10 @@
 (global-set-key "\C-x\C-b" 'ibuffer)
 (add-hook 'ibuffer-mode-hook (lambda () (ibuffer-auto-mode 1)))
 
-;; Don't use hard tabs
-(setq-default indent-tabs-mode nil)
 
-;; Cycle windows with F6
-(defun other-window-or-switch-buffer ()
-  "Call `other-window' if more than one window is visible, switch
-to next buffer otherwise."
-  (interactive)
-  (if (one-window-p)
-      (switch-to-buffer nil)
-    (other-window 1)))
-(global-set-key (kbd "<f6>") #'other-window-or-switch-buffer)
 
-;; Don't hassle about running downcase-region
-(put 'downcase-region 'disabled nil)
 
-;;  See if there are local customisations
+;;  If there is an init.el then evaluate it - presumably we are in the GUI on OS X
 (if (file-exists-p "~/.emacs.d/init.el")
     (load "~/.emacs.d/init.el"))
 

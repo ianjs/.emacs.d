@@ -18,9 +18,19 @@
     ("52588047a0fe3727e3cd8a90e76d7f078c9bd62c0b246324e557dfa5112e0d0c" "cf08ae4c26cacce2eebff39d129ea0a21c9d7bf70ea9b945588c1c66392578d1" "1157a4055504672be1df1232bed784ba575c60ab44d8e6c7b3800ae76b42f8bd" "9e54a6ac0051987b4296e9276eecc5dfb67fdcd620191ee553f40a9b6d943e78" "5ee12d8250b0952deefc88814cf0672327d7ee70b16344372db9460e9a0e3ffc" default)))
  '(fci-rule-color "#2a2a2a")
  '(global-rainbow-delimiters-mode t)
+ '(org-contacts-address-property "CITY" t)
+ '(org-contacts-birthday-property "BORN" t)
+ '(org-contacts-files "~/share/all/org-mode/contacts.org" t)
+ '(org-contacts-icon-property "PHOTOGRAPH" t)
  '(package-selected-packages
    (quote
-    (helm-org-rifle auto-yasnippet clojure-snippets persp-projectile perspective helm-projectile paredit parinfer exec-path-from-shell clojure-mode helm-ack helm-swoop ivy helm markdown-mode flycheck smart-shift visual-regexp-steroids yaml-mode font-lock+-0 all-the-icons neotree puppet-mod puppet-mode org-autolist foo use-package which-key-mode org aa-edit-mode org-ac 0blayout which-key tagedit swiper smex rainbow-delimiters magit iedit hydra company clojure-mode-extra-font-locking cider ace-window)))
+    (org-bullets helm-org-rifle auto-yasnippet clojure-snippets persp-projectile perspective helm-projectile paredit parinfer exec-path-from-shell clojure-mode helm-ack helm-swoop ivy helm markdown-mode flycheck smart-shift visual-regexp-steroids yaml-mode font-lock+-0 all-the-icons neotree puppet-mod puppet-mode org-autolist foo use-package which-key-mode org aa-edit-mode org-ac 0blayout which-key tagedit swiper smex rainbow-delimiters magit iedit hydra company clojure-mode-extra-font-locking cider ace-window)))
+ '(safe-local-variable-values
+   (quote
+    ((eval ispell-change-dictionary "en_US")
+     (TeX-master . "misc")
+     (TeX-master . "references")
+     (eval org-expiry-deinsinuate))))
  '(send-mail-function nil))
 
 (custom-set-faces

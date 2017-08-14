@@ -52,6 +52,8 @@
 ;; manually with M-x package-install
 ;; Add in your own as you wish:
 
+; nice utf-8 bullets in org mode
+(use-package org-bullets)
 
 ;; makes handling lisp expressions much, much easier
 ;; Cheatsheet: http://www.emacswiki.org/emacs/PareditCheatsheet
@@ -99,7 +101,7 @@
 
 ;;(use-package company)
 
-(use-package puppet-mode)
+;;(use-package puppet-mode)
 
 ;; On OS X, an Emacs instance started from the graphical user
 ;; interface will have a different environment than a shell in a

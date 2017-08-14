@@ -3,6 +3,9 @@
 ;; Keeps asking to save, clashes with main invocation of emacs
 (desktop-save-mode 1)
 
+; don't exit in GUI mode in case I did C-x C-c by mistake
+(setq confirm-kill-emacs 'y-or-n-p)
+
 ;; Don't need toolbar
 (tool-bar-mode -1)
 (set-face-attribute 'default nil :height 140)
