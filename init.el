@@ -76,7 +76,7 @@ Note the weekly scope of the command's precision.")
 	      ))))
       (with-temp-file output-file
 	;; Thanks for http://irreal.org/blog/?p=6236 and https://github.com/marcowahl/.emacs.d/blob/master/init.org for the read-only-trick:
-        (insert ";; config.el --- This is the GNU/Emacs config file of Karl Voit. -*- eval: (read-only-mode 1) -*-\n")
+        (insert ";; config.el --- This is the GNU/Emacs config file of Ian Slinger (stolen from Karl Voit). -*- eval: (read-only-mode 1) -*-\n")
         (insert ";; ======================================================================================\n")
         (insert ";; Don't edit this file, edit config.org' instead ...\n")
         (insert ";; Auto-generated at " (format-time-string current-date-time-format (current-time)) "on host " system-name "\n")
@@ -106,7 +106,7 @@ Note the weekly scope of the command's precision.")
 (add-hook 'after-save-hook 'my-tangle-config-org-hook-func)
 
 
-(message "→★ loading init.el in %.2fs" (float-time (time-subtract (current-time) my-init-el-start-time)))
+(message "→★ loaded init.el (including config.org) in %.2fs" (float-time (time-subtract (current-time) my-init-el-start-time)))
 
 
 (custom-set-variables

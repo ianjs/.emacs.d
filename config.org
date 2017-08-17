@@ -15,27 +15,6 @@
 
 #+END_SRC
 
-* General settings
-
-  These are the base setting for GNU/Emacs for all environments ie GUI on OS X/Linux or command line for 
-  Q&D editing.
-
-#+BEGIN_SRC emacs-lisp
- 
-
-#+END_SRC
-
-** Paths:
-#+BEGIN_SRC emacs-lisp
-
-(add-to-list 'exec-path "/usr/local/bin")
-(add-to-list 'exec-path "~/bin")
-
-;; Add a directory to our load path so that we can `load` them
-(add-to-list 'load-path "~/.emacs.d/customizations")
-
-#+END_SRC
-
 
 * Package initialisation
 
@@ -45,34 +24,20 @@ Use =use-package= as much as possible so just bootstrap that to get other packag
 
 #+BEGIN_SRC emacs-lisp
 
-;;;;
-;; Added by Package.el. This must come before configurations of
-;; installed packages.  Don't delete this line.  If you don't want it,
-;; just comment it out by adding a semicolon to the start of the line.
-;; You may delete these explanatory comments.
-(package-initialize)
-
-;; Define package repositories
 (require 'package)
-
+(setq package-enable-at-startup nil)
 (add-to-list 'package-archives
-             '("melpa-stable" . "http://stable.melpa.org/packages/") t)
+             '("melpa" . "https://melpa.org/packages/"))
 
-(add-to-list 'package-pinned-packages '(cider . "melpa-stable") t)
-
-;; latest org mode
-(add-to-list 'package-archives '("org" . "http://orgmode.org/elpa/") t)
-
-;; Load and activate emacs packages. Do this first so that the
-;; packages are loaded before you start trying to modify them.
-;; This also sets the load path.
 (package-initialize)
 
-;; Download the ELPA archive description if needed.
-;; This informs Emacs about the latest versions of all packages, and
-;; makes them available for download.
-(when (not package-archive-contents)
-  (package-refresh-contents))
+;; Bootstrap `use-package'
+(unless (package-installed-p 'use-package)
+  (package-refresh-contents)
+  (package-install 'use-package))
+
+(eval-when-compile
+  (require 'use-package))
 
 (setq use-package-always-ensure t)
 
@@ -174,6 +139,19 @@ Use =use-package= as much as possible so just bootstrap that to get other packag
   :config (setq markdown-command "multimarkdown"
                 markdown-header-scaling 1))
 
+(use-package yasnippet
+  :config
+    (yas-reload-all)
+    (add-hook 'prog-mode-hook #'yas-minor-mode))
+
+;; view only files in a project
+;; hmmm seems to be broken
+;; (use-package perspective
+;;   :init 
+;;     (persp-mode))
+
+;;(use-package persp-projectile)
+
 #+END_SRC
 
 *** Helm stuff
@@ -200,20 +178,6 @@ Use =use-package= as much as possible so just bootstrap that to get other packag
   :init
     (helm-projectile-on))
 
-(use-package yasnippet
-  :config
-    (yas-reload-all)
-    (add-hook 'prog-mode-hook #'yas-minor-mode))
-
-;; view only files in a project
-;; hmmm seems to be broken
-;; (use-package perspective
-;;   :init 
-;;     (persp-mode))
-
-;;(use-package persp-projectile)
-
-
 #+END_SRC
 
 ** Specific package setup
@@ -235,9 +199,12 @@ Use =use-package= as much as possible so just bootstrap that to get other packag
 ;; allow helm to rifle through org buffers
 (use-package helm-org-rifle)
 
+;; Syntax highlighting in org code blocks
+(setq org-src-fontify-natively t)
+
 #+END_SRC
 
-** Setup Clojure
+*** Clojure
 
 #+BEGIN_SRC emacs-lisp
 
@@ -289,40 +256,16 @@ Use =use-package= as much as possible so just bootstrap that to get other packag
 
 #+END_SRC
 
-** Setup Org Mode
-#+BEGIN_SRC emacs-lisp
 
-(setq org-return-follows-link 1)
-(setq org-hide-leading-stars t)
-(setq org-startup-indented t)
+* Editing
 
-;; Don't let M-Ret split lines - why would you?
-(setq org-M-RET-may-split-line '((item . nil)))
-
-;; allow helm to rifle through org buffers
-(use-package helm-org-rifle)
-
-;; Syntax highlighting in org code blocks
-(setq org-src-fontify-natively t)
-
-#+END_SRC
-
-
-* OS Environment specifics
+** Customizations relating to editing a buffer.
 
 #+BEGIN_SRC emacs-lisp
 
-;; Sets up exec-path-from-shell so that Emacs will use the correct
-;; environment variables
-;; Sets up exec-path-from shell
-;; https://github.com/purcell/exec-path-from-shell
+(add-to-list 'exec-path "/usr/local/bin")
+(add-to-list 'exec-path "~/bin")
 
-#+END_SRC
-
-
-* Navigation
-
-#+BEGIN_SRC emacs-lisp
 ;; "When several buffers visit identically-named files,
 ;; Emacs must give the buffers distinct names. The usual method
 ;; for making buffer names unique adds ‘<2>’, ‘<3>’, etc. to the end
@@ -332,21 +275,6 @@ Use =use-package= as much as possible so just bootstrap that to get other packag
 ;; https://www.gnu.org/software/emacs/manual/html_node/emacs/Uniquify.html
 (require 'uniquify)
 (setq uniquify-buffer-name-style 'forward)
-
-;; Turn on recent file mode so that you can more easily switch to
-;; recently edited files when you first start emacs
-(setq recentf-save-file (concat user-emacs-directory ".recentf"))
-(require 'recentf)
-(recentf-mode 1)
-(setq recentf-max-menu-items 40)
-
-#+END_SRC
-
-* Editing
-
-Customizations relating to editing a buffer.
-
-#+BEGIN_SRC emacs-lisp
 
 ;; Highlights matching parenthesis
 (show-paren-mode 1)
@@ -363,18 +291,11 @@ Customizations relating to editing a buffer.
 ;; keep track of saved places in ~/.emacs.d/places
 (setq save-place-file (concat user-emacs-directory "places"))
 
-;; comment line or region
-(defun toggle-comment-on-line ()
-  "comment or uncomment current line"
-  (interactive)
-  (comment-or-uncomment-region (line-beginning-position) (line-end-position)))
-(global-set-key (kbd "C-;") 'toggle-comment-on-line)
-
-;; yay rainbows!
+;; Delimiter depth shown by colour
 (rainbow-delimiters-mode)
 
 ;; use 2 spaces for tabs
-(defun die-tabs ()
+(defun kill-tabs ()
   (interactive)
   (set-variable 'tab-width 2)
   (mark-whole-buffer)
@@ -390,9 +311,8 @@ Customizations relating to editing a buffer.
 
 (setq electric-indent-mode nil)
 
-
-
 #+END_SRC
+
 ** Elisp Editing
 
 #+BEGIN_SRC emacs-lisp
@@ -417,10 +337,11 @@ Customizations relating to editing a buffer.
 
 #+END_SRC
 
+
 * Stuff to do only in GUI mode
 
 Some stuff only applies in GUI mode anyway, and other stuff is because 
-we want to keep the 
+we want to keep the startup short in terminal
 
 #+BEGIN_SRC emacs-lisp
 
@@ -443,13 +364,6 @@ we want to keep the
     (add-to-list 'custom-theme-load-path "~/.emacs.d/themes")
     (add-to-list 'load-path "~/.emacs.d/themes")
     (load-theme 'zenburn t)
-
-    ;; Uncomment the lines below by removing semicolons and play with the
-    ;; values in order to set the width (in characters wide) and height
-    ;; (in lines high) Emacs will have whenever you start it
-
-    ;; Now done by restoring desktop
-    ;;(setq initial-frame-alist '((top . 0) (left . 0) (width . 156) (height . 39)))
 
     ;; These settings relate to how emacs interacts with your operating system
     (setq ;; makes killing/yanking interact with the clipboard
@@ -515,12 +429,10 @@ we want to keep the
     ;; increase font size for better readability
     (set-face-attribute 'default nil :height 160))
 
-
-
-
 #+END_SRC
 
-* IJS Specific customisations
+
+* More IJS Specific customisations
 
 My preferences for a comfortable environment.
 

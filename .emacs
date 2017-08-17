@@ -83,6 +83,14 @@
     (other-window 1)))
 (global-set-key (kbd "<f6>") #'other-window-or-switch-buffer)
 
+;; comment line or region
+(defun toggle-comment-on-line ()
+  "comment or uncomment current line"
+  (interactive)
+  (comment-or-uncomment-region (line-beginning-position) (line-end-position)))
+(global-set-key (kbd "C-;") 'toggle-comment-on-line)
+
+
 ;;;;;;;;;;;;;;;;;;;
 ;; Overridden keys
 ;;;;;;;;;;;;;;;;;;;
