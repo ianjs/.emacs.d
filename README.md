@@ -1,8 +1,6 @@
 # My personal .emacs
 
-This is now in a 'tangled' org file so that:
-
-1. Everthing is in a collapsible list and easy to find
+This is now in a 'tangled' org file so that everything is in a collapsible list and easy to find.
 
 ## Separate .emacs file 
 
