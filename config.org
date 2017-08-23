@@ -48,7 +48,10 @@ Use =use-package= as much as possible so just bootstrap that to get other packag
 #+BEGIN_SRC emacs-lisp
 
 ;; nice utf-8 bullets in org mode
-(use-package org-bullets)
+(use-package org-bullets
+  :ensure t
+  :config
+  (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
 
 ;; makes handling lisp expressions much, much easier
 (use-package paredit)
@@ -71,18 +74,24 @@ Use =use-package= as much as possible so just bootstrap that to get other packag
     (projectile-global-mode))
 
 ;; colorful parenthesis matching
-(use-package rainbow-delimiters 
-  :defer)
+(use-package rainbow-delimiters
+  :ensure
+  :init
+  (progn
+    (add-hook 'emacs-lisp-mode-hook (lambda()
+                      (rainbow-delimiters-mode t)))))
 
 ;; edit html tags like sexps
 (use-package tagedit
   :defer)
 
 ;; git integration
-(setq magit-auto-revert-mode nil)
 (use-package magit
-  :defer)
+  :defer
+  :config 
+  (setq magit-auto-revert-mode nil))
 
+;; Nah don't...
 ;;aggressive-indent
 
 (use-package which-key)
@@ -95,6 +104,7 @@ Use =use-package= as much as possible so just bootstrap that to get other packag
 ;; This library works around this problem by copying important
 ;; environment variables from the user's shell.
 ;; https://github.com/purcell/exec-path-from-shell
+
 ;; THIS IS REALLY SLOW TO START UP! DO WE NEED IT?
 ;; (use-package exec-path-from-shell
 ;;   :ensure t
@@ -178,15 +188,15 @@ Use =use-package= as much as possible so just bootstrap that to get other packag
   :init
     (helm-projectile-on))
 
+;; allow helm to rifle through org buffers
+(use-package helm-org-rifle)
+
 #+END_SRC
 
 ** Specific package setup
 *** Org mode
 
 #+BEGIN_SRC emacs-lisp
-
-;; Nice bullets
-(add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
 
 (setq org-return-follows-link 1)
 
@@ -195,9 +205,6 @@ Use =use-package= as much as possible so just bootstrap that to get other packag
 
 ;; Don't let M-Ret split lines - why would you?
 (setq org-M-RET-may-split-line '((item . nil)))
-
-;; allow helm to rifle through org buffers
-(use-package helm-org-rifle)
 
 ;; Syntax highlighting in org code blocks
 (setq org-src-fontify-natively t)
@@ -214,19 +221,6 @@ Use =use-package= as much as possible so just bootstrap that to get other packag
 
 ;; A little more syntax highlighting
 (require 'clojure-mode-extra-font-locking)
-
-;; syntax hilighting for midje
-(add-hook 'clojure-mode-hook
-          (lambda ()
-            (setq inferior-lisp-program "lein repl")
-            (font-lock-add-keywords
-             nil
-             '(("(\\(facts?\\)"
-                (1 font-lock-keyword-face))
-               ("(\\(background?\\)"
-                (1 font-lock-keyword-face))))
-            (define-clojure-indent (fact 1))
-            (define-clojure-indent (facts 1))))
 
 ;;;;;;;;
 ;; Cider
@@ -279,7 +273,7 @@ Use =use-package= as much as possible so just bootstrap that to get other packag
 ;; Highlights matching parenthesis
 (show-paren-mode 1)
 
-;; DON'T Highlight current line
+;; DON'T Highlight current line except in GUI mode (later)
 (global-hl-line-mode -1)
 
 ;; When you visit a file, point goes to the last place where it
@@ -287,13 +281,9 @@ Use =use-package= as much as possible so just bootstrap that to get other packag
 ;; http://www.emacswiki.org/emacs/SavePlace
 (require 'saveplace)
 (setq-default save-place t)
-
 ;; keep track of saved places in ~/.emacs.d/places
 (setq save-place-file (concat user-emacs-directory "places"))
-
-;; Delimiter depth shown by colour
-(rainbow-delimiters-mode)
-
+  
 ;; use 2 spaces for tabs
 (defun kill-tabs ()
   (interactive)
@@ -302,41 +292,9 @@ Use =use-package= as much as possible so just bootstrap that to get other packag
   (untabify (region-beginning) (region-end))
   (keyboard-quit))
 
-;; fix weird os x kill error
-(defun ns-get-pasteboard ()
-  "Returns the value of the pasteboard, or nil for unsupported formats."
-  (condition-case nil
-      (ns-get-selection-internal 'CLIPBOARD)
-    (quit nil)))
-
 (setq electric-indent-mode nil)
 
 #+END_SRC
-
-** Elisp Editing
-
-#+BEGIN_SRC emacs-lisp
- 
-;; Automatically load paredit when editing a lisp file
-;; More at http://www.emacswiki.org/emacs/ParEdit
-(autoload 'enable-paredit-mode "paredit" "Turn on pseudo-structural editing of Lisp code." t)
-(add-hook 'emacs-lisp-mode-hook       #'enable-paredit-mode)
-(add-hook 'eval-expression-minibuffer-setup-hook #'enable-paredit-mode)
-(add-hook 'ielm-mode-hook             #'enable-paredit-mode)
-(add-hook 'lisp-mode-hook             #'enable-paredit-mode)
-(add-hook 'lisp-interaction-mode-hook #'enable-paredit-mode)
-(add-hook 'scheme-mode-hook           #'enable-paredit-mode)
-
-;; eldoc-mode shows documentation in the minibuffer when writing code
-;; http://www.emacswiki.org/emacs/ElDoc
-(add-hook 'emacs-lisp-mode-hook 'turn-on-eldoc-mode)
-(add-hook 'lisp-interaction-mode-hook 'turn-on-eldoc-mode)
-(add-hook 'ielm-mode-hook 'turn-on-eldoc-mode)
-
-
-
-#+END_SRC
-
 
 * Stuff to do only in GUI mode
 
@@ -412,6 +370,10 @@ we want to keep the startup short in terminal
     ;; Copy on select
     (setq mouse-drag-copy-region t)
 
+    ;; Sane mouse scroll wheel
+    (setq mouse-wheel-scroll-amount '(3))
+    (setq mouse-wheel-progressive-speed nil)
+    
     ;; highlight line is reasonably subtle in gui
     (global-hl-line-mode t)
 
@@ -429,6 +391,17 @@ we want to keep the startup short in terminal
     ;; increase font size for better readability
     (set-face-attribute 'default nil :height 160))
 
+    ;; Highlight whole expression on paren match, not just other bracket
+    (setq show-paren-style 'mixed)
+    (set-face-background 'show-paren-match-face "#666666")
+
+    ;; Nicer font on OSX
+    (set-face-attribute 'default nil :family "Source Code Pro" :weight 'Light  :height 160)
+    (setq-default cursor-type 'box)
+    
+    ;; Set selection colour to something actually visible in this theme
+    (set-face-attribute 'region nil :background "#6666")
+
 #+END_SRC
 
 
@@ -438,45 +411,24 @@ My preferences for a comfortable environment.
 
 #+BEGIN_SRC emacs-lisp
 
+;; Auto save is ok in org mode
+(setq auto-save-default nil) ;; disable by default
+(setq auto-save-timeout 5)
+(add-hook 'org-mode-hook #'auto-save-mode)  ;; enable in org-mode
+
 ;; Set remote user to root by default
 (setq tramp-default-user "root")
 
-;; Highlight whole expression on paren match, not just other bracket
-(setq show-paren-style 'mixed)
-(set-face-background 'show-paren-match-face "#222222")
-
-
 (setq cider-repl-use-pretty-printing t)
-
-
-;; Nicer font on OSX
-(set-face-attribute 'default nil :family "Source Code Pro" :weight 'Light  :height 160)
-(setq-default cursor-type 'box)
-    
-;; Set selection colour to something actually visible in this theme
-(set-face-attribute 'region nil :background "#6666")
-
-;; completion help 
-(which-key-mode)
-
-;; Sane mouse scroll wheel
-(setq mouse-wheel-scroll-amount '(3))
-(setq mouse-wheel-progressive-speed nil)
-
-;; Wavering on auto save. Might trash a conf file if done on command line.
-;; Even GUI mode migt kill a remote file when using Tramp.
-;;(setq auto-save-visited-file-name nil)
-;;(setq auto-save-timeout 5)
 
 ;; Mmmmmm hoopy symbols like λ in lisp
 (global-prettify-symbols-mode +1)
-
 
 #+END_SRC
 
 
 * Wind up config
-
+ 
 #+BEGIN_SRC emacs-lisp
 
 (message "→★ finished loading config.org in %.2fs" (float-time (time-subtract (current-time) my-config-el-start-time)))

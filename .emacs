@@ -47,7 +47,8 @@
 ;; break something on a production server while typing
 ;;(setq auto-save-visited-file-name t)
 ;;(setq auto-save-timeout 5)
-;;(setq auto-save-default nil)
+;; Only enable this in specific modes eg org
+(setq auto-save-default nil)
 
 ;; Don't need no steenking menu
 (menu-bar-mode -1)
