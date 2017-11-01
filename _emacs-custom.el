@@ -24,7 +24,7 @@
  '(org-contacts-icon-property "PHOTOGRAPH" t)
  '(package-selected-packages
    (quote
-    (yasnippet projectile org-bullets helm-org-rifle auto-yasnippet clojure-snippets persp-projectile perspective helm-projectile paredit parinfer exec-path-from-shell clojure-mode helm-ack helm-swoop ivy helm markdown-mode flycheck smart-shift visual-regexp-steroids yaml-mode font-lock+-0 all-the-icons neotree puppet-mod puppet-mode org-autolist foo use-package which-key-mode org aa-edit-mode org-ac 0blayout which-key tagedit swiper smex rainbow-delimiters magit iedit hydra company clojure-mode-extra-font-locking cider ace-window)))
+    (hlinum kibit-helper spaceline spacemacs-theme real-auto-save esup clj-refactor smartparens-config smartparens aggressive-indent yasnippet projectile org-bullets helm-org-rifle auto-yasnippet clojure-snippets persp-projectile perspective helm-projectile paredit parinfer exec-path-from-shell clojure-mode helm-ack helm-swoop ivy helm markdown-mode flycheck smart-shift visual-regexp-steroids yaml-mode font-lock+-0 all-the-icons neotree puppet-mod puppet-mode org-autolist foo use-package which-key-mode org aa-edit-mode org-ac 0blayout which-key tagedit swiper smex rainbow-delimiters magit iedit hydra company clojure-mode-extra-font-locking cider ace-window)))
  '(safe-local-variable-values
    (quote
     ((eval ispell-change-dictionary "en_US")

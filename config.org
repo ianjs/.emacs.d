@@ -11,6 +11,7 @@
 
 #+BEGIN_SRC emacs-lisp
 (defvar my-config-el-start-time (current-time) "Time when config.el was started")
+(setenv "PATH" (concat (getenv "PATH") ":/Users/islinger/bin"))
 ;(profiler-start 'cpu);; test startup performance - create report with M-x profiler-report
 
 #+END_SRC
@@ -44,8 +45,44 @@ Use =use-package= as much as possible so just bootstrap that to get other packag
 #+END_SRC
 
 ** The packages
-
+ 
 #+BEGIN_SRC emacs-lisp
+
+;; Highlight line number as well
+(use-package hlinum
+    :config
+     (hlinum-activate))
+
+;; Nice modeline from spacemacs
+(use-package spaceline
+  :demand t
+  :init
+  (setq powerline-default-separator 'arrow-fade)
+  :config
+  (require 'spaceline-config)
+  ;; (spaceline-spacemacs-theme)
+  (spaceline-emacs-theme)) 
+
+;; Only do auto save in buffers where it is not likely to screw up a live site somewhere over tramp
+(use-package real-auto-save
+  :ensure t
+  :config
+    (add-hook 'org-mode-hook 'real-auto-save-mode)
+    (setq real-auto-save-interval 7)  ;; in seconds
+)
+;; Try company mode again to get nice completion in clojure buffers
+(use-package company
+  :ensure t
+  :diminish company-mode
+  :init
+  (add-hook 'cider-repl-mode-hook #'company-mode)
+  (add-hook 'cider-mode-hook #'company-mode)
+  :bind
+  ("M-/" . company-complete-common)
+  :config
+  (setq company-idle-delay nil) ;; only trigger when asked?
+  (global-set-key (kbd "TAB") #'company-indent-or-complete-common)
+)
 
 ;; nice utf-8 bullets in org mode
 (use-package org-bullets
@@ -53,23 +90,84 @@ Use =use-package= as much as possible so just bootstrap that to get other packag
   :config
   (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
 
-;; makes handling lisp expressions much, much easier
-(use-package paredit)
+(use-package paredit
+  :diminish paredit-mode
+  :init
+  (add-hook 'clojure-mode-hook 'enable-paredit-mode)
+  (add-hook 'cider-repl-mode-hook 'enable-paredit-mode)
+  (add-hook 'lisp-mode-hook 'enable-paredit-mode)
+  (add-hook 'emacs-lisp-mode-hook 'enable-paredit-mode)
+  (add-hook 'lisp-interaction-mode-hook 'enable-paredit-mode)
+  (add-hook 'ielm-mode-hook 'enable-paredit-mode)
+  (add-hook 'json-mode-hook 'enable-paredit-mode))
+
+ ; nice but REALLY slows down editing
+ ;(use-package smartparens
+ ; :defer t
+ ; :ensure t
+ ; :diminish smartparens-mode
+ ; :init
+ ; (setq sp-override-key-bindings
+ ;       '(("C-k" . sp-kill-sexp)
+ ;         ("M-s" . sp-splice-exp)))
+ ; :config
+ ; (require 'smartparens-config)
+ ; (sp-use-smartparens-bindings)
+ ; (sp--update-override-key-bindings)
+ ; (show-smartparens-global-mode t)
+ ; (add-hook 'minibuffer-setup-hook 'turn-on-smartparens-strict-mode)
+ ; :commands (smartparens-mode show-smartparens-mode))
+
+(use-package aggressive-indent
+  :config
+ (global-aggressive-indent-mode 1)) 
 
 ;; key bindings and code colorization for Clojure
 (use-package clojure-mode
-  :defer)
+  :ensure t
+  :defer t
+  :mode (("\\.clj\\'" . clojure-mode)
+         ("\\.edn\\'" . clojure-mode)
+         ("\\.cljs\\'" . clojurescript-mode))
+  :init
+  (add-hook 'clojure-mode-hook #'yas-minor-mode)         
+  (add-hook 'clojure-mode-hook #'linum-mode)             
+  (remove-hook 'clojure-mode-hook #'subword-mode)           
+  ;;(add-hook 'clojure-mode-hook #'smartparens-mode)       
+  (add-hook 'clojure-mode-hook #'rainbow-delimiters-mode)
+  (add-hook 'clojure-mode-hook #'eldoc-mode)
+  :config
+  ;; _ and - are part of a word
+  (modify-syntax-entry ?_ "w" clojure-mode-syntax-table)
+  (modify-syntax-entry ?- "w" clojure-mode-syntax-table))             
 
-;; extra syntax highlighting for clojure
-(use-package clojure-mode-extra-font-locking
-  :defer)
+;; M-x kibit to check for style in clojure
+(use-package kibit-helper)
+
+(use-package clj-refactor)
 
 ;; integration with a Clojure REPL
 (use-package cider
-  :defer)
+  :ensure t 
+  :defer t
+  ;; :init (add-hook 'cider-mode-hook #'clj-refactor-mode)
+  :diminish subword-mode
+  :config
+  (setq nrepl-log-messages t                  
+        ;;cider-repl-display-in-current-window t
+        cider-repl-use-clojure-font-lock t    
+        cider-prompt-save-file-on-load 'always-save
+        cider-font-lock-dynamically '(macro core function var)
+        nrepl-hide-special-buffers t            
+        cider-overlays-use-font-lock t)
+  (setq cider-cljs-lein-repl
+        "(do (require 'figwheel-sidecar.repl-api)
+           (figwheel-sidecar.repl-api/start-figwheel!)
+           (figwheel-sidecar.repl-api/cljs-repl))"))
 
 ;; Project management
 (use-package projectile 
+  :diminish projectile-mode
   :init
     (projectile-global-mode))
 
@@ -91,10 +189,10 @@ Use =use-package= as much as possible so just bootstrap that to get other packag
   :config 
   (setq magit-auto-revert-mode nil))
 
-;; Nah don't...
-;;aggressive-indent
+(diminish 'auto-revert-mode)
 
-(use-package which-key)
+(use-package which-key
+  :diminish which-key-mode)
 
 ;; On OS X, an Emacs instance started from the graphical user
 ;; interface will have a different environment than a shell in a
@@ -112,25 +210,8 @@ Use =use-package= as much as possible so just bootstrap that to get other packag
 ;; 	    (exec-path-from-shell-initialize)
 ;;      (exec-path-from-shell-copy-envs '("PATH"))))
 
-(use-package parinfer
-  :ensure t
-  :bind
-  (("C-," . parinfer-toggle-mode))
-  :init
-  (progn
-    (setq parinfer-extensions
-          '(defaults       ; should be included.
-             pretty-parens  ; different paren styles for different modes.
-             paredit        ; Introduce some paredit commands.
-             smart-tab      ; C-b & C-f jump positions and smart shift with tab & S-tab.
-             smart-yank))   ; Yank behavior depend on mode.
-    (add-hook 'clojure-mode-hook #'parinfer-mode)
-    (add-hook 'emacs-lisp-mode-hook #'parinfer-mode)
-    (add-hook 'common-lisp-mode-hook #'parinfer-mode)
-    (add-hook 'scheme-mode-hook #'parinfer-mode)
-    (add-hook 'lisp-mode-hook #'parinfer-mode)))
-
 (use-package visual-regexp-steroids
+  :diminish isearch-mode
   :ensure
   :demand
   :bind (("C-M-r" . vr/isearch-backward)
@@ -220,7 +301,7 @@ Use =use-package= as much as possible so just bootstrap that to get other packag
 (add-hook 'clojure-mode-hook 'subword-mode)
 
 ;; A little more syntax highlighting
-(require 'clojure-mode-extra-font-locking)
+(use-package clojure-mode-extra-font-locking)
 
 ;;;;;;;;
 ;; Cider
@@ -323,6 +404,10 @@ we want to keep the startup short in terminal
     (add-to-list 'load-path "~/.emacs.d/themes")
     (load-theme 'zenburn t)
 
+     ;; Highlight whole expression on paren match, not just other bracket
+    (setq show-paren-style 'mixed)
+    (set-face-background 'show-paren-match-face "#996666")
+
     ;; These settings relate to how emacs interacts with your operating system
     (setq ;; makes killing/yanking interact with the clipboard
      x-select-enable-clipboard t
@@ -391,10 +476,7 @@ we want to keep the startup short in terminal
     ;; increase font size for better readability
     (set-face-attribute 'default nil :height 160))
 
-    ;; Highlight whole expression on paren match, not just other bracket
-    (setq show-paren-style 'mixed)
-    (set-face-background 'show-paren-match-face "#666666")
-
+   
     ;; Nicer font on OSX
     (set-face-attribute 'default nil :family "Source Code Pro" :weight 'Light  :height 160)
     (setq-default cursor-type 'box)
@@ -403,7 +485,6 @@ we want to keep the startup short in terminal
     (set-face-attribute 'region nil :background "#6666")
 
 #+END_SRC
-
 
 * More IJS Specific customisations
 
@@ -423,6 +504,9 @@ My preferences for a comfortable environment.
 
 ;; Mmmmmm hoopy symbols like λ in lisp
 (global-prettify-symbols-mode +1)
+
+;; Restore/undo last window config with C-c left and C-c right
+(winner-mode 1)
 
 #+END_SRC
 
