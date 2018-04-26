@@ -61,15 +61,16 @@ Use =use-package= as much as possible so just bootstrap that to get other packag
   :config
   (require 'spaceline-config)
   ;; (spaceline-spacemacs-theme)
-  (spaceline-emacs-theme)) 
+  (spaceline-emacs-theme)
+  (spaceline-toggle-buffer-size-off)) 
 
 ;; Only do auto save in buffers where it is not likely to screw up a live site somewhere over tramp
 (use-package real-auto-save
   :ensure t
   :config
     (add-hook 'org-mode-hook 'real-auto-save-mode)
-    (setq real-auto-save-interval 7)  ;; in seconds
-)
+    (setq real-auto-save-interval 7)  ;; in seconds )
+
 ;; Try company mode again to get nice completion in clojure buffers
 (use-package company
   :ensure t
@@ -81,8 +82,7 @@ Use =use-package= as much as possible so just bootstrap that to get other packag
   ("M-/" . company-complete-common)
   :config
   (setq company-idle-delay nil) ;; only trigger when asked?
-  (global-set-key (kbd "TAB") #'company-indent-or-complete-common)
-)
+  (global-set-key (kbd "TAB") #'company-indent-or-complete-common))
 
 ;; nice utf-8 bullets in org mode
 (use-package org-bullets
@@ -119,8 +119,9 @@ Use =use-package= as much as possible so just bootstrap that to get other packag
  ; :commands (smartparens-mode show-smartparens-mode))
 
 (use-package aggressive-indent
+  :diminish aggressive-indent-mode
   :config
- (global-aggressive-indent-mode 1)) 
+    (global-aggressive-indent-mode 1)) 
 
 ;; key bindings and code colorization for Clojure
 (use-package clojure-mode
@@ -183,6 +184,17 @@ Use =use-package= as much as possible so just bootstrap that to get other packag
 (use-package tagedit
   :defer)
 
+(use-package web-mode
+  :diminish web-mode
+  :config 
+    (add-to-list 'auto-mode-alist '("\\.phtml\\'" . web-mode))
+    (add-to-list 'auto-mode-alist '("\\.tpl\\.php\\'" . web-mode))  
+    (add-to-list 'auto-mode-alist '("\\.[agj]sp\\'" . web-mode))
+    (add-to-list 'auto-mode-alist '("\\.as[cp]x\\'" . web-mode))
+    (add-to-list 'auto-mode-alist '("\\.erb\\'" . web-mode))
+    (add-to-list 'auto-mode-alist '("\\.mustache\\'" . web-mode))
+    (add-to-list 'auto-mode-alist '("\\.djhtml\\'" . web-mode)))
+
 ;; git integration
 (use-package magit
   :defer
@@ -231,6 +243,7 @@ Use =use-package= as much as possible so just bootstrap that to get other packag
                 markdown-header-scaling 1))
 
 (use-package yasnippet
+  :diminish yas-minor-mode
   :config
     (yas-reload-all)
     (add-hook 'prog-mode-hook #'yas-minor-mode))
@@ -289,6 +302,9 @@ Use =use-package= as much as possible so just bootstrap that to get other packag
 
 ;; Syntax highlighting in org code blocks
 (setq org-src-fontify-natively t)
+
+;; Hide /italic/ *bold* markers
+(setq org-hide-emphasis-markers t)
 
 #+END_SRC
 
@@ -387,6 +403,26 @@ we want to keep the startup short in terminal
   (if (not  (display-graphic-p))
       (message "Skipping GUI stuff in non GUI environment...")
     
+  ;; Different size heading levels
+  (let* ((variable-tuple (cond ((x-list-fonts "Source Sans Pro") '(:font "Source Sans Pro"))
+                               ((x-list-fonts "Lucida Grande")   '(:font "Lucida Grande"))
+                               ((x-list-fonts "Verdana")         '(:font "Verdana"))
+                               ((x-family-fonts "Sans Serif")    '(:family "Sans Serif"))
+                               (nil (warn "Cannot find a Sans Serif Font.  Install Source Sans Pro."))))
+         (base-font-color     (face-foreground 'default nil 'default))
+         (headline           `(:inherit default  )))
+
+   (custom-theme-set-faces 'user
+                          `(org-level-8 ((t (,@headline ,@variable-tuple))))
+                          `(org-level-7 ((t (,@headline ,@variable-tuple))))
+                          `(org-level-6 ((t (,@headline ,@variable-tuple))))
+                          `(org-level-5 ((t (,@headline ,@variable-tuple))))
+                          `(org-level-4 ((t (,@headline ,@variable-tuple :height 1.05))))
+                          `(org-level-3 ((t (,@headline ,@variable-tuple :height 1.1))))
+                          `(org-level-2 ((t (,@headline ,@variable-tuple :height 1.2))))
+                          `(org-level-1 ((t (,@headline ,@variable-tuple :height 1.2))))
+                          `(org-document-title ((t (,@headline ,@variable-tuple :height 1.5 :underline nil))))))
+
     ;; Remove the graphical toolbar at the top.  
     (when (fboundp 'tool-bar-mode)
       (tool-bar-mode -1))
@@ -501,6 +537,12 @@ My preferences for a comfortable environment.
 (setq tramp-default-user "root")
 
 (setq cider-repl-use-pretty-printing t)
+
+;; Set up cider for clojurescript dev
+(setq cider-cljs-lein-repl
+	"(do (require 'figwheel-sidecar.repl-api)
+         (figwheel-sidecar.repl-api/start-figwheel!)
+         (figwheel-sidecar.repl-api/cljs-repl))")
 
 ;; Mmmmmm hoopy symbols like λ in lisp
 (global-prettify-symbols-mode +1)

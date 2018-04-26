@@ -39,6 +39,12 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(helm-ff-directory ((t (:underline t :slant italic :weight bold))))
+ '(org-document-title ((t (:inherit default :font "Lucida Grande" :height 1.5 :underline nil))))
+ '(org-level-1 ((t (:inherit default :font "Lucida Grande" :height 1.2))))
+ '(org-level-2 ((t (:inherit default :font "Lucida Grande" :height 1.2))))
+ '(org-level-3 ((t (:inherit default :font "Lucida Grande" :height 1.1))))
+ '(org-level-4 ((t (:inherit default :font "Lucida Grande" :height 1.05))))
+ '(org-level-5 ((t (:inherit default :font "Lucida Grande"))))
  '(org-level-6 ((t (:foreground "#7fafaf"))))
  '(org-level-7 ((t (:foreground "dark gray"))))
  '(org-level-8 ((t (:foreground "#cc9073")))))
