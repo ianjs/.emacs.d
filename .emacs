@@ -63,8 +63,7 @@
 (delete-selection-mode 1)
 
 ;; Line numbers
-(global-linum-mode 1)
-(setq linum-format "%d ")
+(global-display-line-numbers-mode 1)
 
 ;; Only prompt with y/n
 (fset 'yes-or-no-p 'y-or-n-p)
@@ -99,7 +98,7 @@
 ;; Use emacs editing extensions and standard emacs keys also work in OSX text edit 
 ;; https://gist.github.com/cheapRoc/9670905
 (global-set-key (kbd "C-/") 'undo)
-(global-set-key [(control h)] 'delete-backward-char)
+;; (global-set-key [(control h)] 'delete-backward-char) ;; Why was I doing this - breaks help?
 
 ;; Kill current buffer without prompt by default
 (global-set-key (kbd "C-x k") 'kill-this-buffer)

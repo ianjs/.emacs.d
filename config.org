@@ -16,7 +16,6 @@
 
 #+END_SRC
 
-
 * Package initialisation
 
 Use =use-package= as much as possible so just bootstrap that to get other packages.
@@ -48,11 +47,6 @@ Use =use-package= as much as possible so just bootstrap that to get other packag
  
 #+BEGIN_SRC emacs-lisp
 
-;; Highlight line number as well
-(use-package hlinum
-    :config
-     (hlinum-activate))
-
 ;; Nice modeline from spacemacs
 (use-package spaceline
   :demand t
@@ -69,7 +63,7 @@ Use =use-package= as much as possible so just bootstrap that to get other packag
   :ensure t
   :config
     (add-hook 'org-mode-hook 'real-auto-save-mode)
-    (setq real-auto-save-interval 7)  ;; in seconds )
+    (setq real-auto-save-interval 7))
 
 ;; Try company mode again to get nice completion in clojure buffers
 (use-package company
@@ -132,7 +126,6 @@ Use =use-package= as much as possible so just bootstrap that to get other packag
          ("\\.cljs\\'" . clojurescript-mode))
   :init
   (add-hook 'clojure-mode-hook #'yas-minor-mode)         
-  (add-hook 'clojure-mode-hook #'linum-mode)             
   (remove-hook 'clojure-mode-hook #'subword-mode)           
   ;;(add-hook 'clojure-mode-hook #'smartparens-mode)       
   (add-hook 'clojure-mode-hook #'rainbow-delimiters-mode)
@@ -144,8 +137,6 @@ Use =use-package= as much as possible so just bootstrap that to get other packag
 
 ;; M-x kibit to check for style in clojure
 (use-package kibit-helper)
-
-(use-package clj-refactor)
 
 ;; integration with a Clojure REPL
 (use-package cider
@@ -201,7 +192,8 @@ Use =use-package= as much as possible so just bootstrap that to get other packag
   :config 
   (setq magit-auto-revert-mode nil))
 
-(diminish 'auto-revert-mode)
+;;; this fails on load
+;;; (diminish 'auto-revert-mode)
 
 (use-package which-key
   :diminish which-key-mode)
@@ -248,6 +240,23 @@ Use =use-package= as much as possible so just bootstrap that to get other packag
     (yas-reload-all)
     (add-hook 'prog-mode-hook #'yas-minor-mode))
 
+;; Nifty flasher to highlight cursor when buffer moves
+(use-package beacon
+  :demand t
+  :diminish beacon-mode
+  :init
+  (setq beacon-size 15
+        beacon-color "red"
+        beacon-blink-when-window-scrolls t
+        beacon-blink-when-window-changes t
+        beacon-blink-when-point-moves t))
+
+;; Increment/decrement numbers with number pad +/-
+(use-package evil-numbers
+  :bind
+  ("<kp-add>" . evil-numbers/inc-at-pt)
+  ("<kp-subtract>"  . evil-numbers/dec-at-pt))
+
 ;; view only files in a project
 ;; hmmm seems to be broken
 ;; (use-package perspective
@@ -284,6 +293,14 @@ Use =use-package= as much as possible so just bootstrap that to get other packag
 
 ;; allow helm to rifle through org buffers
 (use-package helm-org-rifle)
+
+;; Highlight and replace symbols
+(use-package highlight-symbol
+  :init
+  (global-set-key [(control f3)] 'highlight-symbol)
+  (global-set-key [f3] 'highlight-symbol-next)
+  (global-set-key [(shift f3)] 'highlight-symbol-prev)
+  (global-set-key [(meta f3)] 'highlight-symbol-query-replace))
 
 #+END_SRC
 
@@ -438,11 +455,13 @@ we want to keep the startup short in terminal
     ;; for a more technical explanation.
     (add-to-list 'custom-theme-load-path "~/.emacs.d/themes")
     (add-to-list 'load-path "~/.emacs.d/themes")
-    (load-theme 'zenburn t)
+    ;;(load-theme 'zenburn t)
+    (load-theme 'monokai t) ;; Even nicer
 
      ;; Highlight whole expression on paren match, not just other bracket
     (setq show-paren-style 'mixed)
-    (set-face-background 'show-paren-match-face "#996666")
+    ;;;; doesn't work in emacs 26
+    ;;;; (set-face-background 'show-paren-match-face "#996666")
 
     ;; These settings relate to how emacs interacts with your operating system
     (setq ;; makes killing/yanking interact with the clipboard
@@ -499,11 +518,29 @@ we want to keep the startup short in terminal
     (global-hl-line-mode t)
 
     ;; Neo tree
-    (use-package neotree)
-    (global-set-key [f8] 'neotree-toggle)
-    ;; (setq neo-theme (if (display-graphic-p) 'icons 'arrow)) ;; fonts broken
-    (setq neo-theme 'arrow)
-    (setq neo-window-fixed-size nil)
+    (use-package all-the-icons)
+    (use-package neotree
+    :bind
+      ("<f8>" . neotree-toggle)
+    :config
+      ;; needs package all-the-icons
+      (setq neo-theme (if (display-graphic-p) 'icons 'arrow))
+      (setq neo-window-fixed-size nil)    
+
+      ;; Disable line-numbers minor mode for neotree
+      (add-hook 'neo-after-create-hook
+      (lambda (&optional dummy) (display-line-numbers-mode -1)))
+
+      ;; Every time when the neotree window is opened, let it find current
+      ;; file and jump to node.
+      (setq neo-smart-open t)
+
+      ;; track ‘projectile-switch-project’ (C-c p p),
+      (setq projectile-switch-project-action 'neotree-projectile-action))
+
+
+
+
 
     ;; Pretty face
     (set-face-attribute 'default nil :height 140)
@@ -549,6 +586,11 @@ My preferences for a comfortable environment.
 
 ;; Restore/undo last window config with C-c left and C-c right
 (winner-mode 1)
+(global-set-key (kbd "C-c <C-left>") 'winner-undo)
+(global-set-key (kbd "C-c <C-right>") 'winner-redo)
+
+;; Allow 20MB of memory (instead of 0.76MB) before calling garbage collection. This means GC runs less often, which speeds up some operations.
+(setq gc-cons-threshold 20000000)
 
 #+END_SRC
 
