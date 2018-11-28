@@ -63,7 +63,11 @@
 (delete-selection-mode 1)
 
 ;; Line numbers
-(global-display-line-numbers-mode 1)
+(if (version<= "26.0.50" emacs-version )
+  (global-display-line-numbers-mode)
+  (progn
+    (global-linum-mode t)
+    (setq linum-format "%d ")))
 
 ;; Only prompt with y/n
 (fset 'yes-or-no-p 'y-or-n-p)
@@ -134,3 +138,4 @@
     (load "~/.emacs.d/init.el"))
 
 
+(put 'upcase-region 'disabled nil)

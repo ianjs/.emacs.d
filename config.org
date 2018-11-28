@@ -265,6 +265,19 @@ Use =use-package= as much as possible so just bootstrap that to get other packag
 
 ;;(use-package persp-projectile)
 
+(use-package git-gutter                                                                                              
+  :ensure t                                                                                                          
+  :init                                                                                                              
+  (when (display-graphic-p)                                                                                          
+      (use-package git-gutter-fringe                                                                                 
+        :ensure t))                                                                                                  
+  (global-git-gutter-mode))   
+
+(use-package editorconfig
+  :ensure t
+  :config
+  (editorconfig-mode 1))
+
 #+END_SRC
 
 *** Helm stuff
@@ -364,7 +377,6 @@ Use =use-package= as much as possible so just bootstrap that to get other packag
 
 #+END_SRC
 
-
 * Editing
 
 ** Customizations relating to editing a buffer.
@@ -439,6 +451,16 @@ we want to keep the startup short in terminal
                           `(org-level-2 ((t (,@headline ,@variable-tuple :height 1.2))))
                           `(org-level-1 ((t (,@headline ,@variable-tuple :height 1.2))))
                           `(org-document-title ((t (,@headline ,@variable-tuple :height 1.5 :underline nil))))))
+
+    ;; Strike through for DONE items
+    (setq org-fontify-done-headline t)
+    (custom-set-faces
+          '(org-done ((t (:foreground "PaleGreen"   
+                        :weight normal
+                        :strike-through t))))
+          '(org-headline-done 
+                 ((((class color) (min-colors 16) (background dark)) 
+                 (:foreground "LightSalmon" :strike-through t)))))
 
     ;; Remove the graphical toolbar at the top.  
     (when (fboundp 'tool-bar-mode)
@@ -593,7 +615,6 @@ My preferences for a comfortable environment.
 (setq gc-cons-threshold 20000000)
 
 #+END_SRC
-
 
 * Wind up config
  

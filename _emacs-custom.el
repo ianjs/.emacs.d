@@ -24,7 +24,7 @@
  '(org-contacts-icon-property "PHOTOGRAPH" t)
  '(package-selected-packages
    (quote
-    (highlight-symbol web-mode beacon hlinum kibit-helper spaceline spacemacs-theme real-auto-save esup clj-refactor smartparens-config smartparens aggressive-indent yasnippet projectile org-bullets helm-org-rifle auto-yasnippet clojure-snippets persp-projectile perspective helm-projectile paredit parinfer exec-path-from-shell clojure-mode helm-ack helm-swoop ivy helm markdown-mode flycheck smart-shift visual-regexp-steroids yaml-mode font-lock+-0 all-the-icons neotree puppet-mod puppet-mode org-autolist foo use-package which-key-mode org aa-edit-mode org-ac 0blayout which-key tagedit swiper smex rainbow-delimiters magit iedit hydra company clojure-mode-extra-font-locking cider ace-window)))
+    (highlight-indent-guides editorconfig git-gutter-fringe git-gutter arduino-mode highlight-symbol web-mode beacon hlinum kibit-helper spaceline spacemacs-theme real-auto-save esup clj-refactor smartparens-config smartparens aggressive-indent yasnippet projectile org-bullets helm-org-rifle auto-yasnippet clojure-snippets persp-projectile perspective helm-projectile paredit parinfer exec-path-from-shell clojure-mode helm-ack helm-swoop ivy helm markdown-mode flycheck smart-shift visual-regexp-steroids yaml-mode font-lock+-0 all-the-icons neotree puppet-mod puppet-mode org-autolist foo use-package which-key-mode org aa-edit-mode org-ac 0blayout which-key tagedit swiper smex rainbow-delimiters magit iedit hydra company clojure-mode-extra-font-locking cider ace-window)))
  '(safe-local-variable-values
    (quote
     ((eval ispell-change-dictionary "en_US")
@@ -40,6 +40,8 @@
  ;; If there is more than one, they won't work right.
  '(helm-ff-directory ((t (:underline t :slant italic :weight bold))))
  '(org-document-title ((t (:inherit default :font "Lucida Grande" :height 1.5 :underline nil))))
+ '(org-done ((t (:foreground "PaleGreen" :weight normal :strike-through t))))
+ '(org-headline-done ((((class color) (min-colors 16) (background dark)) (:foreground "LightSalmon" :strike-through t))))
  '(org-level-1 ((t (:inherit default :font "Lucida Grande" :height 1.2))))
  '(org-level-2 ((t (:inherit default :font "Lucida Grande" :height 1.2))))
  '(org-level-3 ((t (:inherit default :font "Lucida Grande" :height 1.1))))
