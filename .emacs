@@ -134,7 +134,7 @@
 
 
 ;;  If there is an init.el then evaluate it - presumably we are in the GUI on OS X
-(if (and (file-exists-p "~/.emacs.d/init.el") (display-graphic-p))
+(if (file-exists-p "~/.emacs.d/init.el")
     (load "~/.emacs.d/init.el"))
 
 
