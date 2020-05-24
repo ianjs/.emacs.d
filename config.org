@@ -423,6 +423,8 @@ Use =use-package= as much as possible so just bootstrap that to get other packag
 
 (setq electric-indent-mode nil)
 
+;; Something overrides macro start - restore it
+(global-set-key (quote [f3]) (quote start-kbd-macro))
 #+END_SRC
 
 * Stuff to do only in GUI mode
