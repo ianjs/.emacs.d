@@ -16,3 +16,4 @@ snippets
 config.html
 config.el
 eshell/
+transient/

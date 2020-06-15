@@ -619,6 +619,9 @@ My preferences for a comfortable environment.
 ;; Allow 20MB of memory (instead of 0.76MB) before calling garbage collection. This means GC runs less often, which speeds up some operations.
 (setq gc-cons-threshold 20000000)
 
+;; New comment key in 25.1. M-; toggles comments sensibly
+(global-set-key [remap comment-dwim] #'comment-line)
+
 #+END_SRC
 
 * Wind up config
