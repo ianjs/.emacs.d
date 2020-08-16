@@ -281,6 +281,11 @@ Use =use-package= as much as possible so just bootstrap that to get other packag
   :config
   (editorconfig-mode 1))
 
+(use-package elpy
+  :ensure t
+  :defer t
+  :init
+  (advice-add 'python-mode :before 'elpy-enable))
 (use-package elpy)
 #+END_SRC
 
