@@ -286,7 +286,6 @@ Use =use-package= as much as possible so just bootstrap that to get other packag
   :defer t
   :init
   (advice-add 'python-mode :before 'elpy-enable))
-(use-package elpy)
 #+END_SRC
 
 *** Helm stuff
@@ -488,8 +487,8 @@ we want to keep the startup short in terminal
     ;; for a more technical explanation.
     (add-to-list 'custom-theme-load-path "~/.emacs.d/themes")
     (add-to-list 'load-path "~/.emacs.d/themes")
-    ;;(load-theme 'zenburn t)
-    (load-theme 'monokai t)  ;; Even nicer
+    ;;  (load-theme 'zenburn t)
+    (load-theme 'wombat t)  ;; Even nicer
 
      ;; Highlight whole expression on paren match, not just other bracket
     (setq show-paren-style 'mixed)
