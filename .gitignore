@@ -17,3 +17,4 @@ config.html
 config.el
 eshell/
 transient/
+_emacs-custom.el
