@@ -627,6 +627,9 @@ My preferences for a comfortable environment.
 ;; New comment key in 25.1. M-; toggles comments sensibly
 (global-set-key [remap comment-dwim] #'comment-line)
 
+; Turn off elpy vertical bars. Yuk.
+(add-hook 'elpy-mode-hook (lambda () (highlight-indentation-mode -1)))
+
 #+END_SRC
 
 * Wind up config
