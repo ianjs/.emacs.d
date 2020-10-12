@@ -47,281 +47,251 @@ Use =use-package= as much as possible so just bootstrap that to get other packag
  
 #+BEGIN_SRC emacs-lisp
 
-;; Nice theme
-(use-package monokai-theme )
-  
-;; Nice modeline from spacemacs
-(use-package spaceline
-  :demand t
-  :init
-  (setq powerline-default-separator 'arrow-fade)
-  :config
-  (require 'spaceline-config)
-  ;; (spaceline-spacemacs-theme)
-  (spaceline-emacs-theme)
-  (spaceline-toggle-buffer-size-off)) 
+  ;; Nice theme
+  (use-package monokai-theme )
 
-;; Only do auto save in buffers where it is not likely to screw up a live site somewhere over tramp
-(use-package real-auto-save
-  :ensure t
-  :config
-    (add-hook 'org-mode-hook 'real-auto-save-mode)
-    (setq real-auto-save-interval 7))
+  ;; Nice modeline from spacemacs
+  (use-package spaceline
+    :demand t
+    :init
+    (setq powerline-default-separator 'arrow-fade)
+    :config
+    (require 'spaceline-config)
+    ;; (spaceline-spacemacs-theme)
+    (spaceline-emacs-theme)
+    (spaceline-toggle-buffer-size-off)) 
 
-;; Try company mode again to get nice completion in clojure buffers
-(use-package company
-  :ensure t
-  :diminish company-mode
-  :init
-  (add-hook 'cider-repl-mode-hook #'company-mode)
-  (add-hook 'cider-mode-hook #'company-mode)
-  :bind
-  ("M-/" . company-complete-common)
-  :config
-  (setq company-idle-delay nil) ;; only trigger when asked?
-  (global-set-key (kbd "TAB") #'company-indent-or-complete-common))
+  ;; Only do auto save in buffers where it is not likely to screw up a live site somewhere over tramp
+  (use-package real-auto-save
+    :ensure t
+    :config
+      (add-hook 'org-mode-hook 'real-auto-save-mode)
+      (setq real-auto-save-interval 7))
 
-;; nice utf-8 bullets in org mode
-(use-package org-bullets
-  :ensure t
-  :config
-  (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
+  ;; Try company mode again to get nice completion in clojure buffers
+  (use-package company
+    :ensure t
+    :diminish company-mode
+    :init
+    ;;(add-hook 'cider-repl-mode-hook #'company-mode)
+    ;;(add-hook 'cider-mode-hook #'company-mode)
+    :bind
+    ("M-/" . company-complete-common)
+    :config
+    (setq company-idle-delay nil) ;; only trigger when asked?
+    (global-set-key (kbd "TAB") #'company-indent-or-complete-common))
 
-(use-package paredit
-  :diminish paredit-mode
-  :init
-  (add-hook 'clojure-mode-hook 'enable-paredit-mode)
-  (add-hook 'cider-repl-mode-hook 'enable-paredit-mode)
-  (add-hook 'lisp-mode-hook 'enable-paredit-mode)
-  (add-hook 'emacs-lisp-mode-hook 'enable-paredit-mode)
-  (add-hook 'lisp-interaction-mode-hook 'enable-paredit-mode)
-  (add-hook 'ielm-mode-hook 'enable-paredit-mode)
-  (add-hook 'json-mode-hook 'enable-paredit-mode))
+  ;; nice utf-8 bullets in org mode
+  (use-package org-bullets
+    :ensure t
+    :config
+    (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
 
- ; nice but REALLY slows down editing
- ;(use-package smartparens
- ; :defer t
- ; :ensure t
- ; :diminish smartparens-mode
- ; :init
- ; (setq sp-override-key-bindings
- ;       '(("C-k" . sp-kill-sexp)
- ;         ("M-s" . sp-splice-exp)))
- ; :config
- ; (require 'smartparens-config)
- ; (sp-use-smartparens-bindings)
- ; (sp--update-override-key-bindings)
- ; (show-smartparens-global-mode t)
- ; (add-hook 'minibuffer-setup-hook 'turn-on-smartparens-strict-mode)
- ; :commands (smartparens-mode show-smartparens-mode))
+  (use-package paredit
+    :diminish paredit-mode
+    :init
+;    (add-hook 'clojure-mode-hook 'enable-paredit-mode)
+    ;;(add-hook 'cider-repl-mode-hook 'enable-paredit-mode)
+    (add-hook 'lisp-mode-hook 'enable-paredit-mode)
+    (add-hook 'emacs-lisp-mode-hook 'enable-paredit-mode)
+    (add-hook 'lisp-interaction-mode-hook 'enable-paredit-mode)
+    (add-hook 'ielm-mode-hook 'enable-paredit-mode)
+    (add-hook 'json-mode-hook 'enable-paredit-mode))
 
-(use-package aggressive-indent
-  :diminish aggressive-indent-mode
-  :config
-    (global-aggressive-indent-mode 1)) 
+   ; nice but REALLY slows down editing
+   ;(use-package smartparens
+   ; :defer t
+   ; :ensure t
+   ; :diminish smartparens-mode
+   ; :init
+   ; (setq sp-override-key-bindings
+   ;       '(("C-k" . sp-kill-sexp)
+   ;         ("M-s" . sp-splice-exp)))
+   ; :config
+   ; (require 'smartparens-config)
+   ; (sp-use-smartparens-bindings)
+   ; (sp--update-override-key-bindings)
+   ; (show-smartparens-global-mode t)
+   ; (add-hook 'minibuffer-setup-hook 'turn-on-smartparens-strict-mode)
+   ; :commands (smartparens-mode show-smartparens-mode))
 
-;; key bindings and code colorization for Clojure
-(use-package clojure-mode
-  :ensure t
-  :defer t
-  :mode (("\\.clj\\'" . clojure-mode)
-         ("\\.edn\\'" . clojure-mode)
-         ("\\.cljs\\'" . clojurescript-mode))
-  :init
-  (add-hook 'clojure-mode-hook #'yas-minor-mode)         
-  (remove-hook 'clojure-mode-hook #'subword-mode)           
-  ;;(add-hook 'clojure-mode-hook #'smartparens-mode)       
-  (add-hook 'clojure-mode-hook #'rainbow-delimiters-mode)
-  (add-hook 'clojure-mode-hook #'eldoc-mode)
-  :config
-  ;; _ and - are part of a word
-  (modify-syntax-entry ?_ "w" clojure-mode-syntax-table)
-  (modify-syntax-entry ?- "w" clojure-mode-syntax-table))             
+  (use-package aggressive-indent
+    :diminish aggressive-indent-mode
+    :config
+      (global-aggressive-indent-mode 1)) 
 
-;; M-x kibit to check for style in clojure
-(use-package kibit-helper)
+  ;; key bindings and code colorization for Clojure
+  ;; (use-package clojure-mode
+  ;;   :ensure t
+  ;;   :defer t
+  ;;   :mode (("\\.clj\\'" . clojure-mode)
+  ;;          ("\\.edn\\'" . clojure-mode)
+  ;;          ("\\.cljs\\'" . clojurescript-mode))
+  ;;   :init
+  ;;   (add-hook 'clojure-mode-hook #'yas-minor-mode)         
+  ;;   (remove-hook 'clojure-mode-hook #'subword-mode)           
+  ;;   ;;(add-hook 'clojure-mode-hook #'smartparens-mode)       
+  ;;   (add-hook 'clojure-mode-hook #'rainbow-delimiters-mode)
+  ;;   (add-hook 'clojure-mode-hook #'eldoc-mode)
+  ;;   :config
+  ;;   ;; _ and - are part of a word
+  ;;   (modify-syntax-entry ?_ "w" clojure-mode-syntax-table)
+  ;;   (modify-syntax-entry ?- "w" clojure-mode-syntax-table))
 
-;; integration with a Clojure REPL
-;(use-package cider
-;  :ensure t 
-;  :defer t
-;  ;; :init (add-hook 'cider-mode-hook #'clj-refactor-mode)
-; :diminish subword-mode
-;  :config
-;  (setq nrepl-log-messages t                  
-;        ;;cider-repl-display-in-current-window t
-;        cider-repl-use-clojure-font-lock t    
-;        cider-prompt-save-file-on-load 'always-save
-;        cider-font-lock-dynamically '(macro core function var)
-;        nrepl-hide-special-buffers t            
-;        cider-overlays-use-font-lock t)
-;  (setq cider-cljs-lein-repl
-;        "(do (require 'figwheel-sidecar.repl-api)
-;           (figwheel-sidecar.repl-api/start-figwheel!)
-;           (figwheel-sidecar.repl-api/cljs-repl))"))
 
-;; Project management
-(use-package projectile 
-  :diminish projectile-mode
-  :init
-    (projectile-global-mode))
+  ;; M-x kibit to check for style in clojure
+  ;(use-package kibit-helper)
 
-;; colorful parenthesis matching
-(use-package rainbow-delimiters
-  :ensure
-  :init
-  (progn
-    (add-hook 'emacs-lisp-mode-hook (lambda()
-                      (rainbow-delimiters-mode t)))))
+  ;; integration with a Clojure REPL
+  ;(use-package cider
+  ;  :ensure t 
+  ;  :defer t
+  ;  ;; :init (add-hook 'cider-mode-hook #'clj-refactor-mode)
+  ; :diminish subword-mode
+  ;  :config
+  ;  (setq nrepl-log-messages t                  
+  ;        ;;cider-repl-display-in-current-window t
+  ;        cider-repl-use-clojure-font-lock t    
+  ;        cider-prompt-save-file-on-load 'always-save
+  ;        cider-font-lock-dynamically '(macro core function var)
+  ;        nrepl-hide-special-buffers t            
+  ;        cider-overlays-use-font-lock t)
+  ;  (setq cider-cljs-lein-repl
+  ;        "(do (require 'figwheel-sidecar.repl-api)
+  ;           (figwheel-sidecar.repl-api/start-figwheel!)
+  ;           (figwheel-sidecar.repl-api/cljs-repl))"))
 
-;; edit html tags like sexps
-(use-package tagedit
-  :defer)
+  ;; Project management
+   ;; (use-package projectile 
+   ;;  :diminish projectile-mode
+   ;;  :init
+   ;;    (projectile-global-mode))
 
-(use-package web-mode
-  :diminish web-mode
-  :config 
-    (add-to-list 'auto-mode-alist '("\\.phtml\\'" . web-mode))
-    (add-to-list 'auto-mode-alist '("\\.tpl\\.php\\'" . web-mode))  
-    (add-to-list 'auto-mode-alist '("\\.[agj]sp\\'" . web-mode))
-    (add-to-list 'auto-mode-alist '("\\.as[cp]x\\'" . web-mode))
-    (add-to-list 'auto-mode-alist '("\\.erb\\'" . web-mode))
-    (add-to-list 'auto-mode-alist '("\\.mustache\\'" . web-mode))
-    (add-to-list 'auto-mode-alist '("\\.djhtml\\'" . web-mode)))
+  ;; colorful parenthesis matching
+  (use-package rainbow-delimiters
+    :ensure
+    :init
+    (progn
+      (add-hook 'emacs-lisp-mode-hook (lambda()
+                        (rainbow-delimiters-mode t)))))
 
-;; git integration
-(use-package magit
-  :defer
-  :config 
-  (setq magit-auto-revert-mode nil))
+  ;; edit html tags like sexps
+  (use-package tagedit
+    :defer)
 
-;;; this fails on load
-;;; (diminish 'auto-revert-mode)
+  (use-package web-mode
+    :diminish web-mode
+    :config 
+      (add-to-list 'auto-mode-alist '("\\.phtml\\'" . web-mode))
+      (add-to-list 'auto-mode-alist '("\\.tpl\\.php\\'" . web-mode))  
+      (add-to-list 'auto-mode-alist '("\\.[agj]sp\\'" . web-mode))
+      (add-to-list 'auto-mode-alist '("\\.as[cp]x\\'" . web-mode))
+      (add-to-list 'auto-mode-alist '("\\.erb\\'" . web-mode))
+      (add-to-list 'auto-mode-alist '("\\.mustache\\'" . web-mode))
+      (add-to-list 'auto-mode-alist '("\\.djhtml\\'" . web-mode)))
 
-(use-package which-key
-  :diminish which-key-mode)
+  ;; git integration
+  (use-package magit
+    :defer
+    :config 
+    (setq magit-auto-revert-mode nil))
 
-;; On OS X, an Emacs instance started from the graphical user
-;; interface will have a different environment than a shell in a
-;; terminal window, because OS X does not run a shell during the
-;; login. Obviously this will lead to unexpected results when
-;; calling external utilities like make from Emacs.
-;; This library works around this problem by copying important
-;; environment variables from the user's shell.
-;; https://github.com/purcell/exec-path-from-shell
+  ;;; this fails on load
+  ;;; (diminish 'auto-revert-mode)
 
-;; THIS IS REALLY SLOW TO START UP! DO WE NEED IT?
-;; (use-package exec-path-from-shell
-;;   :ensure t
-;;   :config (when (memq window-system '(mac ns))
-;; 	    (exec-path-from-shell-initialize)
-;;      (exec-path-from-shell-copy-envs '("PATH"))))
+  (use-package which-key
+    :diminish which-key-mode)
 
-(use-package visual-regexp-steroids
-  :diminish isearch-mode
-  :ensure
-  :demand
-  :bind (("C-M-r" . vr/isearch-backward)
-         ("C-M-s" . vr/isearch-forward)
-         ("M-%" . vr/query-replace)))
+  ;; On OS X, an Emacs instance started from the graphical user
+  ;; interface will have a different environment than a shell in a
+  ;; terminal window, because OS X does not run a shell during the
+  ;; login. Obviously this will lead to unexpected results when
+  ;; calling external utilities like make from Emacs.
+  ;; This library works around this problem by copying important
+  ;; environment variables from the user's shell.
+  ;; https://github.com/purcell/exec-path-from-shell
 
-(use-package yaml-mode
-  :mode ("\\.\\(e?ya?\\|ra\\)ml\\'" . yaml-mode))
+  ;; THIS IS REALLY SLOW TO START UP! DO WE NEED IT?
+  ;; (use-package exec-path-from-shell
+  ;;   :ensure t
+  ;;   :config (when (memq window-system '(mac ns))
+  ;; 	    (exec-path-from-shell-initialize)
+  ;;      (exec-path-from-shell-copy-envs '("PATH"))))
 
-(use-package markdown-mode
-  :ensure t
-  :commands (markdown-mode gfm-mode)
-  :mode (("README\\.md\\'" . gfm-mode)
-         ("\\.md\\'" . markdown-mode)
-         ("\\.markdown\\'" . markdown-mode))
-  :config (setq markdown-command "multimarkdown"
-                markdown-header-scaling 1))
+  (use-package visual-regexp-steroids
+    :diminish isearch-mode
+    :ensure
+    :demand
+    :bind (("C-M-r" . vr/isearch-backward)
+           ("C-M-s" . vr/isearch-forward)
+           ("M-%" . vr/query-replace)))
 
-(use-package yasnippet
-  :diminish yas-minor-mode
-  :config
-    (yas-reload-all)
-    (add-hook 'prog-mode-hook #'yas-minor-mode))
+  (use-package yaml-mode
+    :mode ("\\.\\(e?ya?\\|ra\\)ml\\'" . yaml-mode))
 
-;; Nifty flasher to highlight cursor when buffer moves
-;(use-package beacon
-;  :demand t
-;  :diminish beacon-mode
-;  :init
-;  (setq beacon-size 15
-;        beacon-color "red"
-;        beacon-blink-when-window-scrolls t
-;        beacon-blink-when-window-changes t
-;        beacon-blink-when-point-moves t))
+  (use-package markdown-mode
+    :ensure t
+    :commands (markdown-mode gfm-mode)
+    :mode (("README\\.md\\'" . gfm-mode)
+           ("\\.md\\'" . markdown-mode)
+           ("\\.markdown\\'" . markdown-mode))
+    :config (setq markdown-command "multimarkdown"
+                  markdown-header-scaling 1))
 
-;; Increment/decrement numbers with number pad +/-
-(use-package evil-numbers
-  :bind
-  ("<kp-add>" . evil-numbers/inc-at-pt)
-  ("<kp-subtract>"  . evil-numbers/dec-at-pt))
+    (use-package git-gutter                                                                                              
+    :ensure t                                                                                                          
+    :init                                                                                                              
+    (when (display-graphic-p)                                                                                          
+        (use-package git-gutter-fringe                                                                                 
+          :ensure t))                                                                                                  
+    (global-git-gutter-mode))   
 
-;; view only files in a project
-;; hmmm seems to be broken
-;; (use-package perspective
-;;   :init 
-;;     (persp-mode))
+  (use-package editorconfig
+    :ensure t
+    :config
+    (editorconfig-mode 1))
 
-;;(use-package persp-projectile)
-
-(use-package git-gutter                                                                                              
-  :ensure t                                                                                                          
-  :init                                                                                                              
-  (when (display-graphic-p)                                                                                          
-      (use-package git-gutter-fringe                                                                                 
-        :ensure t))                                                                                                  
-  (global-git-gutter-mode))   
-
-(use-package editorconfig
-  :ensure t
-  :config
-  (editorconfig-mode 1))
-
-(use-package elpy
-  :ensure t
-  :defer t
-  :init
-  (advice-add 'python-mode :before 'elpy-enable))
+  (use-package elpy
+    :ensure t
+    :defer t
+    :init
+    (advice-add 'python-mode :before 'elpy-enable))
 #+END_SRC
 
 *** Helm stuff
 
 #+BEGIN_SRC emacs-lisp
 
-(use-package helm
-  :bind (("M-x" . helm-M-x)
-         ("M-<f5>" . helm-find-files)
-         ("C-x C-b" . helm-buffers-list)
-         ([S-f10] . helm-recentf)
-         ("C-x C-f" . helm-find-files))
+  (use-package helm
+    :bind (("M-x" . helm-M-x)
+           ("M-<f5>" . helm-find-files)
+           ("C-x C-b" . helm-buffers-list)
+           ([S-f10] . helm-recentf)
+           ("C-x C-f" . helm-find-files))
 
-  :init
-     (progn
-       (setq helm-buffers-fuzzy-matching t 
-             helm-buffer-max-length nil)))
+    :init
+       (progn
+         (setq helm-buffers-fuzzy-matching t 
+               helm-buffer-max-length nil)))
        
 
-(use-package helm-swoop)
+  (use-package helm-swoop)
 
-(use-package helm-projectile
-  :bind (("C-x C-b" . helm-projectile-switch-to-buffer))
-  :init
-    (helm-projectile-on))
+  ;; (use-package helm-projectile
+  ;;   :bind (("C-x C-b" . helm-projectile-switch-to-buffer))
+  ;;   :init
+  ;;     (helm-projectile-on))
 
-;; allow helm to rifle through org buffers
-(use-package helm-org-rifle)
+  ;; allow helm to rifle through org buffers
+  (use-package helm-org-rifle)
 
-;; Highlight and replace symbols
-(use-package highlight-symbol
-  :init
-  (global-set-key [(control f3)] 'highlight-symbol)
-  (global-set-key [f3] 'highlight-symbol-next)
-  (global-set-key [(shift f3)] 'highlight-symbol-prev)
-  (global-set-key [(meta f3)] 'highlight-symbol-query-replace))
+  ;; Highlight and replace symbols
+  (use-package highlight-symbol
+    :init
+    (global-set-key [(control f3)] 'highlight-symbol)
+    (global-set-key [f3] 'highlight-symbol-next)
+    (global-set-key [(shift f3)] 'highlight-symbol-prev)
+    (global-set-key [(meta f3)] 'highlight-symbol-query-replace))
 
 #+END_SRC
 
@@ -350,38 +320,38 @@ Use =use-package= as much as possible so just bootstrap that to get other packag
 
 #+BEGIN_SRC emacs-lisp
 
-;; This is useful for working with camel-case tokens, like names of
-;; Java classes (e.g. JavaClassName)
-(add-hook 'clojure-mode-hook 'subword-mode)
+  ;; ;; This is useful for working with camel-case tokens, like names of
+  ;; ;; Java classes (e.g. JavaClassName)
+  ;; (add-hook 'clojure-mode-hook 'subword-mode)
 
-;; A little more syntax highlighting
-(use-package clojure-mode-extra-font-locking)
+  ;; ;; A little more syntax highlighting
+  ;; ;(use-package clojure-mode-extra-font-locking)
 
-;;;;;;;;
-;; Cider
-;;;;;;;;
+  ;; ;;;;;;;;
+  ;; ;; Cider
+  ;; ;;;;;;;;
 
-;; provides minibuffer documentation for the code you're typing into the repl
-;;(add-hook 'cider-mode-hook 'eldoc-mode)
+  ;; ;; provides minibuffer documentation for the code you're typing into the repl
+  ;; ;;(add-hook 'cider-mode-hook 'eldoc-mode)
 
-;; go right to the REPL buffer when it's finished connecting
-(setq cider-repl-pop-to-buffer-on-connect t)
+  ;; ;; go right to the REPL buffer when it's finished connecting
+  ;; (setq cider-repl-pop-to-buffer-on-connect t)
 
-;; When there's a cider error, show its buffer and switch to it
-(setq cider-show-error-buffer t)
-(setq cider-auto-select-error-buffer t)
+  ;; ;; When there's a cider error, show its buffer and switch to it
+  ;; (setq cider-show-error-buffer t)
+  ;; (setq cider-auto-select-error-buffer t)
 
-;; Where to store the cider history.
-(setq cider-repl-history-file "~/.emacs.d/cider-history")
+  ;; ;; Where to store the cider history.
+  ;; (setq cider-repl-history-file "~/.emacs.d/cider-history")
 
-;; Wrap when navigating history.
-(setq cider-repl-wrap-history t)
+  ;; ;; Wrap when navigating history.
+  ;; (setq cider-repl-wrap-history t)
 
-;; Use clojure mode for other extensions
-(add-to-list 'auto-mode-alist '("\\.edn$" . clojure-mode))
-(add-to-list 'auto-mode-alist '("\\.boot$" . clojure-mode))
-(add-to-list 'auto-mode-alist '("\\.cljs.*$" . clojure-mode))
-(add-to-list 'auto-mode-alist '("lein-env" . enh-ruby-mode))
+  ;; ;; Use clojure mode for other extensions
+  ;; (add-to-list 'auto-mode-alist '("\\.edn$" . clojure-mode))
+  ;; (add-to-list 'auto-mode-alist '("\\.boot$" . clojure-mode))
+  ;; (add-to-list 'auto-mode-alist '("\\.cljs.*$" . clojure-mode))
+  ;; (add-to-list 'auto-mode-alist '("lein-env" . enh-ruby-mode))
 
 #+END_SRC
 
@@ -401,8 +371,11 @@ Use =use-package= as much as possible so just bootstrap that to get other packag
 ;; The forward naming method includes part of the file's directory
 ;; name at the beginning of the buffer name
 ;; https://www.gnu.org/software/emacs/manual/html_node/emacs/Uniquify.html
-(require 'uniquify)
-(setq uniquify-buffer-name-style 'forward)
+(use-package uniquify
+  :ensure nil
+  :config
+  (setq uniquify-buffer-name-style 'forward))
+
 
 ;; Highlights matching parenthesis
 (show-paren-mode 1)
@@ -413,10 +386,11 @@ Use =use-package= as much as possible so just bootstrap that to get other packag
 ;; When you visit a file, point goes to the last place where it
 ;; was when you previously visited the same file.
 ;; http://www.emacswiki.org/emacs/SavePlace
-(require 'saveplace)
-(setq-default save-place t)
-;; keep track of saved places in ~/.emacs.d/places
-(setq save-place-file (concat user-emacs-directory "places"))
+(use-package saveplace
+  :config
+  (setq-default save-place t)
+  ;; keep track of saved places in ~/.emacs.d/places
+  (setq save-place-file (concat user-emacs-directory "places")))
   
 ;; use 2 spaces for tabs
 (defun kill-tabs ()
@@ -605,13 +579,13 @@ My preferences for a comfortable environment.
 ;; Set remote user to root by default
 (setq tramp-default-user "root")
 
-(setq cider-repl-use-pretty-printing t)
+;(setq cider-repl-use-pretty-printing t)
 
 ;; Set up cider for clojurescript dev
-(setq cider-cljs-lein-repl
-	"(do (require 'figwheel-sidecar.repl-api)
-         (figwheel-sidecar.repl-api/start-figwheel!)
-         (figwheel-sidecar.repl-api/cljs-repl))")
+;(setq cider-cljs-lein-repl
+;	"(do (require 'figwheel-sidecar.repl-api)
+;         (figwheel-sidecar.repl-api/start-figwheel!)
+;         (figwheel-sidecar.repl-api/cljs-repl))")
 
 ;; Mmmmmm hoopy symbols like λ in lisp
 (global-prettify-symbols-mode +1)

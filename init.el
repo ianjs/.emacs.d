@@ -1,3 +1,7 @@
+;; Make startup faster by reducing the frequency of garbage
+;; collection.  The default is 800 kilobytes.  Measured in bytes.
+(setq gc-cons-threshold (* 50 1000 1000))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;  Cloned from here:
 ;;    https://github.com/larstvei/dot-emacs
@@ -130,3 +134,6 @@ Note the weekly scope of the command's precision.")
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  )
+;; Make gc pauses faster by decreasing the threshold.
+(setq gc-cons-threshold (* 2 1000 1000))
+

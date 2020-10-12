@@ -18,3 +18,6 @@ config.el
 eshell/
 transient/
 _emacs-custom.el
+.cache/
+.lsp-session-v1
+elpy/
