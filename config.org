@@ -41,6 +41,12 @@ Use =use-package= as much as possible so just bootstrap that to get other packag
 
 (setq use-package-always-ensure t)
 
+;; The default setting is too low for lsp-mode's needs due to the fact that client/server communication generates a lot of memory/garbage. 
+(setq gc-cons-threshold (* 100 1000 1000))
+;; Again the emacs default is too low 4k considering that the some of the language server responses are in 800k - 3M range.
+(setq read-process-output-max (* 2 1024 1024)) ;; 2mb
+
+
 #+END_SRC
 
 ** The packages
@@ -262,13 +268,15 @@ Use =use-package= as much as possible so just bootstrap that to get other packag
 (use-package lsp-mode
   :init
   ;; set prefix for lsp-command-keymap (few alternatives - "C-l", "C-c l")
-  (setq lsp-keymap-prefix "C-c l")
+  (setq lsp-keymap-prefix "M-z")
   :hook (;; replace XXX-mode with concrete major-mode(e. g. python-mode)
          (python-mode . lsp-deferred))
          :commands (lsp lsp-deferred))
 
+(setq lsp-headerline-breadcrumb-enable nil)
+
 ;; optionally
-(use-package lsp-ui :commands lsp-ui-mode)
+;;(use-package lsp-ui :commands lsp-ui-mode)
 ;; if you are helm user
 (use-package helm-lsp :commands helm-lsp-workspace-symbol)
 ;; if you are ivy user
@@ -629,11 +637,6 @@ My preferences for a comfortable environment.
 (winner-mode 1)
 (global-set-key (kbd "C-c <C-left>") 'winner-undo)
 (global-set-key (kbd "C-c <C-right>") 'winner-redo)
-
-;; The default setting is too low for lsp-mode's needs due to the fact that client/server communication generates a lot of memory/garbage. 
-(setq gc-cons-threshold (* 100 1000 1000))
-;; Again the emacs default is too low 4k considering that the some of the language server responses are in 800k - 3M range.
-(setq read-process-output-max (* 2 1024 1024)) ;; 2mb
 
 ;; New comment key in 25.1. M-; toggles comments sensibly
 (global-set-key [remap comment-dwim] #'comment-line)
