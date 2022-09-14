@@ -254,6 +254,9 @@ Use =use-package= as much as possible so just bootstrap that to get other packag
 *** Development
 #+BEGIN_SRC emacs-lisp
 
+(use-package jinja2-mode
+)
+
 ;; optional if you want which-key integration
 (use-package which-key
     :config
