@@ -123,10 +123,10 @@ Use =use-package= as much as possible so just bootstrap that to get other packag
      ; (add-hook 'minibuffer-setup-hook 'turn-on-smartparens-strict-mode)
      ; :commands (smartparens-mode show-smartparens-mode))
 
-    (use-package aggressive-indent
-      :diminish aggressive-indent-mode
-      :config
-        (global-aggressive-indent-mode 1)) 
+     ;(use-package aggressive-indent
+     ; :diminish aggressive-indent-mode
+     ; :config
+     ;   (global-aggressive-indent-mode 1)) 
 
     ;; key bindings and code colorization for Clojure
     ;; (use-package clojure-mode
