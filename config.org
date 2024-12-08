@@ -52,6 +52,8 @@ Use =use-package= as much as possible so just bootstrap that to get other packag
 ** The packages
 *** Look 'n' Feel 
 #+BEGIN_SRC emacs-lisp
+    (use-package cider
+      :ensure t)
 
     ;; Nice theme
     (use-package monokai-theme 
