@@ -288,7 +288,7 @@ Use =use-package= as much as possible so just bootstrap that to get other packag
 (use-package helm-lsp :commands helm-lsp-workspace-symbol)
 ;; if you are ivy user
 ;;(use-package lsp-ivy :commands lsp-ivy-workspace-symbol)
-(use-package lsp-treemacs :commands lsp-treemacs-errors-list)
+;;(use-package lsp-treemacs :commands lsp-treemacs-errors-list)
 
 ;; optionally if you want to use debugger
 ;;(use-package dap-mode)
@@ -604,7 +604,7 @@ we want to keep the startup short in terminal
 
    
     ;; Nicer font on OSX
-    (set-face-attribute 'default nil :family "Source Code Pro" :weight 'Light  :height 160)
+    (set-face-attribute 'default nil :family "Monospace" :weight 'Light  :height 120)
     (setq-default cursor-type 'box)
     
     ;; Set selection colour to something actually visible in this theme
@@ -650,6 +650,9 @@ My preferences for a comfortable environment.
 
 ; Turn off elpy vertical bars. Yuk.
 (add-hook 'elpy-mode-hook (lambda () (highlight-indentation-mode -1)))
+
+(global-set-key (kbd "<f8>") 'other-window)
+
 
 #+END_SRC
 
